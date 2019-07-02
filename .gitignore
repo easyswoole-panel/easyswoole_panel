@@ -1,0 +1,16 @@
+# ide
+.idea
+.vscode
+runtime
+
+# composer
+vendor
+composer.lock
+
+# easySwoole
+Config.php
+easyswoole
+easyswoole.install
+src/swoole_log.txt
+Temp
+Log

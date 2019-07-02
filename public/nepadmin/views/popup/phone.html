@@ -1,0 +1,25 @@
+<style>
+#VIEW-popup-phone-qrcode{
+    text-align: center;
+}
+#VIEW-popup-phone-qrcode .qrcode{
+    display: inline-block;
+    margin:30px auto;
+}
+#VIEW-popup-phone-qrcode h2{
+    margin-bottom: 10px;
+}
+</style>
+<div class="layui-fluid" id="VIEW-popup-phone-qrcode" lay-title="手机浏览">
+    <div class="qrcode"></div>
+    <h2>使用手机浏览</h2>
+    <p class="nepadmin-c-gray">...</p>
+</div>
+<script>
+layui.use(['admin','table','helper','qrcode'], function(admin,table,helper){
+    var $ = layui.jquery;
+    var view = $('#VIEW-popup-phone-qrcode');
+    var viewQrcode = view.find('.qrcode');
+    helper.qrcode(viewQrcode,location.href);
+})
+</script>
