@@ -24,10 +24,10 @@ abstract class Base extends \EasySwoole\Http\AbstractInterface\Controller
 		* 各个action的参数校验
 		*/
 		$v = $this->getValidateRule($action);
-		if ($v && !$this->validate($v)) {
-		    $this->writeJson(\EasySwoole\Http\Message\Status::CODE_BAD_REQUEST, ['errorCode' => 1, 'data' => []], $v->getError()->__toString());
-		    return false;
-		}
+		// if ($v && !$this->validate($v)) {
+		//     $this->writeJson(\EasySwoole\Http\Message\Status::CODE_BAD_REQUEST, ['errorCode' => 1, 'data' => []], $v->getError()->__toString());
+		//     return false;
+		// }
 		return true;
 	}
 

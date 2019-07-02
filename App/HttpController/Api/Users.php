@@ -2,7 +2,7 @@
 
 namespace App\HttpController\Api;
 
-use App\HttpController\EasySwoole\MysqliPool\Mysql;
+use EasySwoole\MysqliPool\Mysql;
 use App\Model\Users\UsersBean;
 use App\Model\Users\UsersModel;
 use EasySwoole\Http\Message\Status;
@@ -218,6 +218,7 @@ class Users extends Base
     protected function getValidateRule(?string $action): ?bool
     {
         // TODO: Implement getValidateRule() method.
+        return true;
     }
 }
 

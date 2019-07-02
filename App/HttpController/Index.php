@@ -16,6 +16,7 @@ class Index  extends Controller
 
     function index()
     {
+        echo "11\n";
         // TODO: Implement index() method.
         // $db = \EasySwoole\MysqliPool\Mysql::defer('mysql');
         //

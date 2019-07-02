@@ -291,6 +291,7 @@ layui
           if (existsTab) {
             var menu = $(this.menu)
             var currentMenu = menu.find(lay)
+            self.setTitle(currentMenu[0].innerText);
 
             if (existsTab.href !== route.href) {
               tab.del(existsTab.fileurl, true)
