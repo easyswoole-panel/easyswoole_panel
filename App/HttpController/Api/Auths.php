@@ -2,6 +2,8 @@
 
 namespace App\HttpController\Api;
 
+use App\Model\System\SystemBean;
+use App\Model\System\SystemModel;
 use EasySwoole\MysqliPool\Mysql;
 use App\Model\Auths\AuthsBean;
 use App\Model\Auths\AuthsModel;
@@ -304,5 +306,44 @@ class Auths extends Base
 json;
         $this->response()->write($str);
     }
+
+    public function get_menu_new()
+    {
+        $onlyMenu = false;
+        $db = Mysql::defer('mysql');
+        $systemModel = new SystemModel($db);
+        $systemInfo = $systemModel->getOne(new SystemBean(['id' => 1]));
+
+        if ($systemInfo == null){
+
+        }
+
+        $order  = json_decode($systemInfo['auth_order'], TRUE);
+        $return = $this->makeTree($order);
+
+    }
+    function makeTree($child)
+    {
+        $return = [];
+        foreach ($child as $key => $value){
+            // 未有权限
+            if ( empty($this->auth_list[$value['id']] )){
+                continue;
+            }
+            // 如果只需要获取菜单
+            if (true == $this->onlyMenu){
+                if ($this->auth_list[$value['id']]['auth_type'] == '1'){
+                    continue;
+                }
+            }
+            $tem = $this->auth_list[$value['id']];
+            if ( isset($value['child']) ){
+                $tem['child'] = $this->makeTree($value['child']);
+            }
+            $return[] = $tem;
+        }
+        return $return;
+    }
+
 }
 

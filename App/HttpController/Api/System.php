@@ -2,10 +2,10 @@
 
 namespace App\HttpController\Api;
 
-use App\HttpController\EasySwoole\MysqliPool\Mysql;
 use App\Model\System\SystemBean;
 use App\Model\System\SystemModel;
 use EasySwoole\Http\Message\Status;
+use EasySwoole\MysqliPool\Mysql;
 
 /**
  * Class System
