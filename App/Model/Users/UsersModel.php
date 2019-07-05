@@ -2,6 +2,12 @@
 
 namespace App\Model\Users;
 
+use App\Model\Auths\AuthsModel;
+use App\Model\Roles\RolesModel;
+use EasySwoole\Mysqli\Exceptions\ConnectFail;
+use EasySwoole\Mysqli\Exceptions\PrepareQueryFail;
+use http\Client\Curl\User;
+
 /**
  * 用户表
  * Class UsersModel
@@ -53,6 +59,21 @@ class UsersModel extends \App\Model\BaseModel
 		return new UsersBean($info);
 	}
 
+	public function getOneByAccount(UsersBean $bean, string  $field = '*'): ?UsersBean
+    {
+        $info = null;
+        try {
+            $info = $this->getDb()->where('u_account', $bean->getUAccount())->getOne($this->table, $field);
+        } catch (ConnectFail $e) {
+        } catch (PrepareQueryFail $e) {
+        } catch (\Throwable $e) {
+        }
+        if (empty($info)) {
+            return null;
+        }
+        return new UsersBean($info);
+    }
+
 
 	/**
 	 * 默认根据bean数据进行插入数据
@@ -92,5 +113,46 @@ class UsersModel extends \App\Model\BaseModel
 		}
 		return $this->getDb()->where($this->primaryKey, $bean->getUId())->update($this->table, $data);
 	}
+
+	public function getAuth(int $uId)
+    {
+        $info = $this->getOne(new UsersBean(['u_id' => $uId]), 'u_id,u_auth,role_id');
+
+        if ($info == null) return [];
+
+        // 角色权限
+        $roleIds = explode(',', $info->toArray()['role_id']);
+
+        // 管理员 全部权限
+        if(in_array(1, $roleIds)){
+            $authsModel = new AuthsModel($this->getDb());
+            $auths      = $authsModel->all();
+            return $auths;
+        }
+
+        $roleModel = new RolesModel($this->getDb());
+        $roleList = $roleModel->getIn('role_id', $roleIds);
+
+        // 个人权限
+        $authIds = explode(',', $info->toArray()['u_auth']);
+
+        // 如果有角色权限 则合并
+        if(!empty($roleList)){
+            foreach ($roleList as $row){
+                $tem     = explode(',', $row['role_auth']);
+                $authIds = array_merge($authIds, $tem);
+            }
+        }
+        $authIds = array_unique($authIds);
+
+        if (!empty($authIds)){
+            $auths = new AuthsModel($this->getDb());
+            $list = $auths->getIn('auth_id', $authIds, 'auth_id,auth_name,auth_rules,auth_icon,auth_type');
+            return $list;
+        }
+
+        return [];
+
+    }
 }
 

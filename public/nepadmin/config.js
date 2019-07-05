@@ -32,10 +32,10 @@ layui.define(function(exports) {
     tableName: 'nepadmin',
     //全局设置 headers 信息
     requestHeaders: {
-      'Test-User-Agent': 'os=pc;ver=0.0.1;imei=asdasdas'
+
     },
     //request 基础URL
-    requestUrl: './',
+    requestUrl: 'http://192.168.23.128:9501/api/',
     //独立页面路由，可随意添加（无需写参数）
     indPage: [
       '/user/login', //登入页
@@ -56,12 +56,12 @@ layui.define(function(exports) {
       statusName: 'code',
       statusCode: {
         //数据状态一切正常的状态码
-        ok: 0,
+        ok: 200,
         //通过接口返回的登录过期状态码
         logout: 401
       },
       msgName: 'msg', //状态信息的字段名称
-      dataName: 'data', //数据详情的字段名称
+      dataName: 'result', //数据详情的字段名称
       countName: 'count' //数据条数的字段名称，用于 table
     },
     //全局 table 配置

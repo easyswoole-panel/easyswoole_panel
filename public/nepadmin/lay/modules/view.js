@@ -477,12 +477,14 @@ layui
               if (status == conf.response.statusCode.logout) {
                 layui.admin.logout()
               } else {
-                self.log(
-                  '返回状态码异常：' +
-                    res[conf.response.statusName] +
-                    '\n请求URL：' +
-                    params.url
-                )
+                // self.log(
+                //   '返回状态码异常：' +
+                //     res[conf.response.statusName] +
+                //     '\n请求URL：' +
+                //     params.url
+                // );
+                layer.alert('返回状态码异常：' +res[conf.response.statusName] + "<br/>" + res[conf.response.msgName]);
+                return false;
               }
             }
             if ($.isFunction(success)) success(res)

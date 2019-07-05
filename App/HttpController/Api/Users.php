@@ -2,10 +2,13 @@
 
 namespace App\HttpController\Api;
 
+use EasySwoole\EasySwoole\Config;
 use EasySwoole\MysqliPool\Mysql;
 use App\Model\Users\UsersBean;
 use App\Model\Users\UsersModel;
 use EasySwoole\Http\Message\Status;
+use EasySwoole\Validate\Validate;
+use Siam\JWT;
 
 /**
  * 用户表
@@ -215,10 +218,54 @@ class Users extends Base
 		}
 	}
 
-    protected function getValidateRule(?string $action): ?bool
+    protected function getValidateRule(?string $action): ?Validate
     {
         // TODO: Implement getValidateRule() method.
-        return true;
+        switch ($action){
+            case 'login':
+                $valitor = new Validate();
+                $valitor->addColumn('u_account')->required();
+                $valitor->addColumn('u_password')->required();
+                return $valitor;
+                break;
+        }
+        return null;
+    }
+
+    public function login()
+    {
+        $db = Mysql::defer('mysql');
+        $userModel = new UsersModel($db);
+        $userBean  = new UsersBean([
+            'u_account' => $this->request()->getRequestParam('u_account')
+        ]);
+        $user = $userModel->getOneByAccount($userBean);
+
+        if ($user === null){
+            $this->writeJson(Status::CODE_NOT_FOUND, new \stdClass(), '用户不存在');
+            return false;
+        }
+
+
+        // 生成token
+        $config = Config::getInstance();
+        $jwtConfig = $config->getConf('JWT');
+        $token = JWT::getInstance()->setSub($jwtConfig['sub'])
+            ->setIss($jwtConfig['iss'])
+            ->setExp($jwtConfig['exp'] + time())
+            ->setSecretKey($jwtConfig['key'])
+            ->setNbf(($jwtConfig['nbf'] !== null) ? time() + $jwtConfig['nbf'] : time())
+            ->setWith([
+                'u_id' => $user->getUId(),
+                'u_name' => $user->getUName(),
+            ])
+            ->make();
+
+        $this->writeJson(Status::CODE_OK, [
+            'token'    => $token,
+            'userInfo' => $user->toArray(),
+            'authList' => [],
+        ], '登陆成功');
     }
 }
 

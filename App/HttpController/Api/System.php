@@ -6,6 +6,7 @@ use App\Model\System\SystemBean;
 use App\Model\System\SystemModel;
 use EasySwoole\Http\Message\Status;
 use EasySwoole\MysqliPool\Mysql;
+use EasySwoole\Validate\Validate;
 
 /**
  * Class System
@@ -174,7 +175,7 @@ class System extends Base
 		}
 	}
 
-    protected function getValidateRule(?string $action): ?bool
+    protected function getValidateRule(?string $action): ?Validate
     {
         // TODO: Implement getValidateRule() method.
     }

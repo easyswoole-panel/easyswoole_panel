@@ -7,7 +7,11 @@
     "require": {
         "php": ">=7.2",
         "easyswoole/easyswoole": "3.x-dev",
-      	"tioncico/curd-automatic-generation": "dev-master"
+      	"tioncico/curd-automatic-generation": "dev-master",
+        "ext-json": "*",
+        "siam/commom-helper": "^1.0",
+        "easyswoole/policy": "^1.0",
+        "easyswoole/fast-cache": "^1.1"
     },
     "repositories": {
         "packagist": {

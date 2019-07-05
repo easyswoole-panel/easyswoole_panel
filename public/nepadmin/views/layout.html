@@ -52,7 +52,7 @@
           </li>
           <li class="layui-nav-item" lay-unselect>
               <a class="layui-hide-xs">
-                  欢迎回来，{{ layui.admin.data()['user'].username  }}
+                  欢迎回来，{{ layui.admin.data()['user'].u_name  }}
                   <i class="layui-icon layui-icon-triangle-d"></i>
               </a>
               <a class="layui-hide-sm layui-show-xs-inline-block">
@@ -106,7 +106,7 @@
                     if(!data || data.length == 0) return '';
                     var html = '<dl class="layui-nav-child">';
                     layui.each(data,function(i,child){
-                        html += '<dd><a style="padding-left:'+(index == 0 ? 50 : 50 + index * 20)+'px" target="'+(child.target||'')+'" lay-href="'+ (child.href||'') +'">' + child.title + '</a>';
+                        html += '<dd><a style="padding-left:'+(index == 0 ? 50 : 50 + index * 20)+'px" target="'+(child.target||'')+'" lay-href="'+ (child.auth_rules||'') +'">' + child.auth_name + '</a>';
                         if(child.childs) html += __createSlidebar(child.childs,index+1);
                         html += '</dd>';
                     });
@@ -116,7 +116,7 @@
                 layui.each(d,function(i,child){
             }}
             <li class="layui-nav-item">
-                <a lay-href="{{child.href||''}}" target="{{child.target||''}}" title="{{child.title}}"><i class="layui-icon {{child.icon}}"></i>{{child.title}} {{# if(child.notice){ }}<span class="layui-badge">{{ child.notice }}</span>{{# } }}</a>
+                <a lay-href="{{child.auth_rules||''}}" target="{{child.target||''}}" title="{{child.auth_name}}"><i class="layui-icon {{child.auth_icon}}"></i>{{child.auth_name}} {{# if(child.notice){ }}<span class="layui-badge">{{ child.notice }}</span>{{# } }}</a>
                 {{ __createSlidebar(child.childs,0) }}
             </li>
             {{# }) }}

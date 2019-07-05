@@ -2,6 +2,9 @@
 
 namespace App\Model\Roles;
 
+use EasySwoole\Mysqli\Exceptions\ConnectFail;
+use EasySwoole\Mysqli\Exceptions\PrepareQueryFail;
+
 /**
  * Class RolesModel
  * Create With Automatic Generator
@@ -91,5 +94,18 @@ class RolesModel extends \App\Model\BaseModel
 		}
 		return $this->getDb()->where($this->primaryKey, $bean->getRoleId())->update($this->table, $data);
 	}
+
+    public function getIn(string $where, array $in, string $field = '*')
+    {
+        $list = [];
+        try {
+            $list = $this->getDb()->where($where, $in, 'IN')->get($this->table, NULL, $field);
+        } catch (ConnectFail $e) {
+        } catch (PrepareQueryFail $e) {
+        } catch (\Throwable $e) {
+        }
+        return $list ?? [];
+
+    }
 }
 

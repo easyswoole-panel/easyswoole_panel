@@ -6,6 +6,7 @@ use EasySwoole\MysqliPool\Mysql;
 use App\Model\Roles\RolesBean;
 use App\Model\Roles\RolesModel;
 use EasySwoole\Http\Message\Status;
+use EasySwoole\Validate\Validate;
 
 /**
  * Class Roles
@@ -190,7 +191,7 @@ class Roles extends Base
 		}
 	}
 
-    protected function getValidateRule(?string $action): ?bool
+    protected function getValidateRule(?string $action): ?Validate
     {
         // TODO: Implement getValidateRule() method.
     }

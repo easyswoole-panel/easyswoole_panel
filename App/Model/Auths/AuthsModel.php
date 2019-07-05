@@ -2,6 +2,9 @@
 
 namespace App\Model\Auths;
 
+use EasySwoole\Mysqli\Exceptions\ConnectFail;
+use EasySwoole\Mysqli\Exceptions\PrepareQueryFail;
+
 /**
  * Class AuthsModel
  * Create With Automatic Generator
@@ -35,6 +38,21 @@ class AuthsModel extends \App\Model\BaseModel
 		return ['total' => $total, 'list' => $list];
 	}
 
+	public function all(string $keyword = null, string $field = '*')
+    {
+        if (!empty($keyword)) {
+            $this->getDb()->where('auth_name', '%' . $keyword . '%', 'like');
+        }
+        $list = null;
+        try {
+            $list = $this->getDb()->get($this->table, null,  $field);
+        } catch (ConnectFail $e) {
+        } catch (PrepareQueryFail $e) {
+        } catch (\Throwable $e) {
+        }
+        return $list;
+    }
+
 
 	/**
 	 * 默认根据主键(auth_id)进行搜索
@@ -51,6 +69,15 @@ class AuthsModel extends \App\Model\BaseModel
 		}
 		return new AuthsBean($info);
 	}
+
+    public function getOneByRules(AuthsBean $bean, string $field = '*'): ?AuthsBean
+    {
+        $info = $this->getDb()->where('auth_rules', $bean->getAuthRules())->getOne($this->table,$field);
+        if (empty($info)) {
+            return null;
+        }
+        return new AuthsBean($info);
+    }
 
 
 	/**
@@ -91,5 +118,18 @@ class AuthsModel extends \App\Model\BaseModel
 		}
 		return $this->getDb()->where($this->primaryKey, $bean->getAuthId())->update($this->table, $data);
 	}
+
+    public function getIn(string $where, array $in, string $field = '*')
+    {
+        $list = [];
+        try {
+            $list = $this->getDb()->where($where, $in, 'IN')->get($this->table, NULL, $field);
+        } catch (ConnectFail $e) {
+        } catch (PrepareQueryFail $e) {
+        } catch (\Throwable $e) {
+        }
+        return $list ?? [];
+
+    }
 }
 

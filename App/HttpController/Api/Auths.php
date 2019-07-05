@@ -2,12 +2,14 @@
 
 namespace App\HttpController\Api;
 
+use App\HttpController\Common\Menu;
 use App\Model\System\SystemBean;
 use App\Model\System\SystemModel;
 use EasySwoole\MysqliPool\Mysql;
 use App\Model\Auths\AuthsBean;
 use App\Model\Auths\AuthsModel;
 use EasySwoole\Http\Message\Status;
+use EasySwoole\Validate\Validate;
 
 /**
  * Class Auths
@@ -50,6 +52,16 @@ class Auths extends Base
 		$rs = $model->add($bean);
 		if ($rs) {
 		    $bean->setAuthId($db->getInsertId());
+            // 更新排序
+            $system      = new SystemModel($db);
+            $systemBean  = new SystemBean(['id' => 1]);
+            $systeminfo  = $system->getOne($systemBean, 'auth_order');
+            $authOrder   = json_decode($systeminfo->toArray()['auth_order'], TRUE);
+            $authOrder[] = [
+                'id' => $bean->getAuthId(),
+            ];
+            $system->update($systemBean, ['auth_order' => json_encode($authOrder)]);
+
 		    $this->writeJson(Status::CODE_OK, $bean->toArray(), "success");
 		} else {
 		    $this->writeJson(Status::CODE_BAD_REQUEST, [], $db->getLastError());
@@ -192,158 +204,55 @@ class Auths extends Base
 		}
 	}
 
-    protected function getValidateRule(?string $action): ?bool
+    protected function getValidateRule(?string $action): ?Validate
     {
-        // TODO: Implement getValidateRule() method.
-        return true;
+        switch ($action){
+            case 'save_tree_list':
+                $valitor = new Validate();
+                $valitor->addColumn('order')->required();
+                return $valitor;
+                break;
+        }
+        return null;
     }
 
     public function get_menu()
     {
-        $str = <<<json
-{
-	"code": 0,
-	"msg": "ok",
-	"data": [{
-		"title":"首页",
-		"icon": "layui-icon-home",
-		"href": "/"
-	},{
-		"title":"列表页",
-		"icon": "layui-icon-unorderedlist",
-		"childs":[{
-			"title": "表格列表",
-			"href":"/list/table/id=1"
-		},{
-			"title": "卡片列表",
-			"href":"/list/card"
-		}]
-	},{
-		"title":"详情页",
-		"icon": "layui-icon-container",
-		"childs":[{
-			"title": "工作计划",
-			"href":"/detail/plan"
-		},{
-      "title":"数据统计",
-      "href": "/chart/index"
-    }]
-	},{
-		"title":"表单页",
-		"icon": "layui-icon-file-exception",
-		"childs":[{
-			"title": "表单元素",
-			"href":"/form/basic"
-		},{
-			"title": "表单组合",
-			"href":"/form/group"
-		}]
-	},{
-		"title":"异常页",
-		"icon": "layui-icon-error",
-		"childs":[{
-			"title": "403",
-			"href":"/exception/403"
-		},{
-			"title": "404",
-			"href":"/exception/404"
-		},{
-			"title": "500",
-			"href":"/exception/500"
-		}]
-	},{
-		"title": "新增模块",
-		"icon": "layui-icon-experiment",
-		"notice":3,
-		"childs":[{
-			"title": "admin",
-			"href":"/module/admin"
-		},{
-			"title": "helper",
-			"href":"/module/helper"
-		},{
-			"title": "loadBar",
-			"href":"/module/loadbar"
-		}]
-	},{
-		"title": "图标",
-		"icon": "layui-icon-star",
-		"href":"/icon/index"
-	},{
-		"title": "多级导航",
-		"icon": "layui-icon-apartment",
-		"childs":[{
-			"title": "Dota2",
-			"childs":[{
-				"title": "敌法师",
-				"childs":[{
-					"title": "法力损毁"
-				},{
-					"title": "闪烁"
-				},{
-					"title": "法术护盾"
-				},{
-					"title": "法力虚空"
-				}]
-			},{
-				"title": "帕吉",
-				"childs":[{
-					"title": "肉钩"
-				},{
-					"title": "腐烂"
-				},{
-					"title": "腐肉堆积"
-				},{
-					"title": "肢解"
-				}]
-			}]
-		},{
-			"title": "LOL",
-			"childs":[]
-		}]
-	}]
-}
-json;
-        $this->response()->write($str);
+        $menu = new Menu();
+        $menu->setOnlyMenu(true);
+        $tree = $menu->get($this->token['u_id']);
+        array_unshift($tree, ['auth_rules'=>'/', 'auth_name' => '首页', 'auth_icon' => 'layui-icon-home']);
+        $this->writeJson(Status::CODE_OK, $tree, "success");
     }
 
-    public function get_menu_new()
+    public function get_tree_list()
     {
-        $onlyMenu = false;
+        // 只有管理员能调用
+        $menu = new Menu();
+        $menu->setOnlyMenu(false);
+        $tree = $menu->get(1);
+        $this->writeJson(Status::CODE_OK, $tree, "success");
+    }
+
+    public function save_tree_list()
+    {
+        $request = $this->request();
+        $order   = $request->getRequestParam('order');
+
+        // 字符替换
+        $order = str_replace('children', 'child', $order);
+
         $db = Mysql::defer('mysql');
         $systemModel = new SystemModel($db);
-        $systemInfo = $systemModel->getOne(new SystemBean(['id' => 1]));
+        $res = $systemModel->update(new SystemBean(['id' => 1]), ['auth_order' => $order]);
 
-        if ($systemInfo == null){
-
+        if ($res){
+            $this->writeJson(Status::CODE_OK, [], "SUCCESS");
+            return true;
         }
 
-        $order  = json_decode($systemInfo['auth_order'], TRUE);
-        $return = $this->makeTree($order);
+        $this->writeJson(Status::CODE_INTERNAL_SERVER_ERROR, [], "ERROR");
 
     }
-    function makeTree($child)
-    {
-        $return = [];
-        foreach ($child as $key => $value){
-            // 未有权限
-            if ( empty($this->auth_list[$value['id']] )){
-                continue;
-            }
-            // 如果只需要获取菜单
-            if (true == $this->onlyMenu){
-                if ($this->auth_list[$value['id']]['auth_type'] == '1'){
-                    continue;
-                }
-            }
-            $tem = $this->auth_list[$value['id']];
-            if ( isset($value['child']) ){
-                $tem['child'] = $this->makeTree($value['child']);
-            }
-            $return[] = $tem;
-        }
-        return $return;
-    }
-
 }
 

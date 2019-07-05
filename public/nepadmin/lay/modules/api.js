@@ -1,8 +1,15 @@
 //请求URL
 layui.define([],function(exports){
     exports('api',{
-        login:'json/login.js',
-        getMenu:'json/menu.js',
-        getGoods:'json/goods.js'
+        login:'users/login',
+
+        getMenu:'auths/get_menu',
+        getGoods:'json/goods.js',
+
+        // 权限管理
+        getAuthList : 'auths/get_tree_list',
+        saveAuthList: 'auths/save_tree_list',
+        addAuth: 'auths/add'
+
     });
-})
+});

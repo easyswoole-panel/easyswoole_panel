@@ -7,7 +7,7 @@
  */
 
 return [
-    'SERVER_NAME' => "EasySwoole",
+    'SERVER_NAME' => "easySiam",
     'MAIN_SERVER' => [
         'LISTEN_ADDRESS' => '0.0.0.0',
         'PORT' => 9501,
@@ -42,5 +42,13 @@ return [
         'alias'                => '',//子查询别名
         'isSubQuery'           => false,//是否为子查询
         'max_reconnect_times ' => '3',//最大重连次数
+    ],
+    /**##################     JWT      #############*/
+    'JWT' => [
+        'iss' => 'siam', // 发行人
+        'exp' => 7200, // 过期时间 默认2小时 2*60*60=7200
+        'sub' => 'easySiam', // 主题
+        'nbf' => NULL, // 在此之前不可用
+        'key' => 'www.siammmm.cn', // 签名用的key
     ],
 ];
