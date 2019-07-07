@@ -448,6 +448,9 @@ layui
         ico.removeClass(activeCls).addClass(normalCls)
       }
     })
+    self.renderTable = function (params) {
+        view.renderTable(params);
+    };
 
     if ($(window).width() <= mobileWidth) {
       mobileAdapter()

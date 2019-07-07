@@ -131,5 +131,24 @@ class AuthsModel extends \App\Model\BaseModel
         return $list ?? [];
 
     }
+
+    /**
+     * 根据auth_id数组查询列表
+     * @param $auths
+     * @return \EasySwoole\Mysqli\Mysqli|mixed|null
+     */
+    public function getListById($auths, $field='*')
+    {
+        $res = null;
+
+        try {
+            $res = $this->getDb()->where('auth_id', $auths, 'IN')->get($this->table, null, $field);
+        } catch (ConnectFail $e) {
+        } catch (PrepareQueryFail $e) {
+        } catch (\Throwable $e) {
+        }
+
+        return $res;
+    }
 }
 

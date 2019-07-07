@@ -5,10 +5,10 @@
         <!-- 添加角色 -->
         <div class="layui-col-md6">
             <form class="layui-card layui-form" layui-filter="add-role">
-                <div class="layui-card-header">添加角色</div>
+                <div class="layui-card-header" id="rolebd_status">添加角色</div>
                 <div class="layui-card-body layui-row layui-col-space10">
                     <div class="layui-col-md12">
-                        <input type="text" name="auth_name" placeholder="角色名" autocomplete="off" lay-verify="required" class="layui-input">
+                        <input type="text" name="role_name" placeholder="角色名" autocomplete="off" lay-verify="required" class="layui-input">
                     </div>
                     <div class="layui-col-md12">
                         <select name="role_auth" xm-select="role_auth" xm-select-search="" xm-select-search-type="dl" id="role_auth">
@@ -25,19 +25,34 @@
         </div>
         <!-- 添加角色结束 -->
 
+        <!-- 角色列表 -->
         <div class="layui-col-md6">
+            <div class="layui-card" >
+                <div class="layui-card-header">角色列表</div>
+                <div class="layui-card-body layui-row layui-col-space10">
+                    <div class="layui-col-md12">
+                        <table id="role_list" lay-filter="role_table"></table>
+                    </div>
+                </div>
+            </div>
         </div>
+        <!-- 角色列表结束 -->
     </div>
-
 </div>
+<!-- 角色列表bar tool -->
+<script type="text/html" id="role_bar">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
 
 <script>
-    layui.use(['admin', 'form', 'jquery', 'laytpl', 'formSelects'], function (admin, form) {
+    layui.use(['admin', 'table', 'form', 'jquery', 'laytpl', 'formSelects'], function (admin, form) {
         var $ = layui.jquery;
         var element = layui.element;
         var laytpl = layui.laytpl;
         var formSelects = layui.formSelects;
-
+        var table = layui.table;
+        var rolebd_status_value = 'add';
         // 加载权限列表
         admin.post({
             api: 'getAllAuth',
@@ -55,13 +70,83 @@
             }
         });
 
+        // 加载角色列表
+        admin.renderTable({
+            elem: '#role_list'
+            ,api: 'getAllRole'
+            ,page: false //开启分页
+            ,cols: [[ //表头
+                {field: 'role_id', title: '角色id'}
+                ,{field: 'role_name', title: '角色名'}
+                // ,{field: 'role_status', title: '角色状态'
+                //     ,templet: function(d){
+                //         return d.role_status === 0 ? '正常' : '禁用';
+                //     }
+                // }
+                ,{toolbar: '#role_bar'}
+            ]]
+        });
         // 添加角色添加
         form.on('submit(add-role)', function (data) {
-            console.log(data.field);
+            console.log(rolebd_status_value);
+            return false;
+            switch (rolebd_status_value) {
+                case 'add':
+                    admin.post({
+                        api: "addRole",
+                        data: data.field,
+                        success:function (res) {
+                            layer.alert("添加角色成功",{
+                                yes:function () {
+                                    layui.view.tab.refresh();
+                                    layer.closeAll();
+                                    formSelects.render();
+                                    form.render();
+                                }
+                            })
+                        }
+                    });
+                    break;
+                case 'edit':
+                    alert("现在在修改");
+                    break;
+            }
+
             return false;
         });
 
         formSelects.render();
         form.render();
+
+        //监听工具条
+        table.on('tool(role_table)', function(obj){
+            let data = obj.data;
+            let layEvent = obj.event;
+            let tr = obj.tr;
+
+            if(layEvent === 'detail'){
+                //do somehing
+            } else if(layEvent === 'del'){
+                layer.msg("暂不支持");return false;
+                layer.confirm('真的删除行么', function(index){
+
+                });
+            } else if(layEvent === 'edit'){
+                // 请求信息接口，然后打开弹窗
+                admin.post({
+                    api: 'getRoleInfo',
+                    data: {
+                        role_id:data.role_id
+                    },
+                    success:function (res) {
+                        rolebd_status_value = 'edit';
+                        $('#rolebd_status').html("修改角色 - "+res.result.role_name);
+                        $("input[name=role_name]").val(res.result.role_name);
+                        form.render();
+                        formSelects.value('role_auth', res.result.role_auth.split(","));
+                    }
+                })
+            }
+        });
     });
 </script>

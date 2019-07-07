@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Api;
 
+use App\Model\Auths\AuthsModel;
 use EasySwoole\MysqliPool\Mysql;
 use App\Model\Roles\RolesBean;
 use App\Model\Roles\RolesModel;
@@ -42,10 +43,10 @@ class Roles extends Base
 		$bean = new RolesBean();
 		$bean->setRoleName($param['role_name']);
 		$bean->setRoleAuth($param['role_auth']);
-		$bean->setRoleStatus($param['role_status']);
-		$bean->setLevel($param['level']);
-		$bean->setCreateTime($param['create_time']);
-		$bean->setUpdateTime($param['update_time']);
+		$bean->setRoleStatus(0); // 0正常1禁用
+		$bean->setLevel(0);
+		$bean->setCreateTime(time());
+		$bean->setUpdateTime(time());
 		$rs = $model->add($bean);
 		if ($rs) {
 		    $bean->setRoleId($db->getInsertId());
@@ -126,6 +127,12 @@ class Roles extends Base
 		$model = new RolesModel($db);
 		$bean = $model->getOne(new RolesBean(['role_id' => $param['role_id']]));
 		if ($bean) {
+		    // 附带auth列表
+            // $auths = explode(',', $bean->getRoleAuth());
+            // $authModel = new AuthsModel($db);
+            // $authInfo = $authModel->getListById($auths,'auth_id,auth_name');
+            // $bean->setRoleAuth($authInfo);
+
 		    $this->writeJson(Status::CODE_OK, $bean, "success");
 		} else {
 		    $this->writeJson(Status::CODE_BAD_REQUEST, [], 'fail');
@@ -154,8 +161,8 @@ class Roles extends Base
 	{
 		$db = Mysql::defer('mysql');
 		$param = $this->request()->getRequestParam();
-		$page = (int)$param['page']??1;
-		$limit = (int)$param['limit']??20;
+		$page = (int)($param['page']??1);
+		$limit = (int)($param['limit']??20);
 		$model = new RolesModel($db);
 		$data = $model->getAll($page, $param['keyword']??null, $limit);
 		$this->writeJson(Status::CODE_OK, $data, 'success');
@@ -194,6 +201,7 @@ class Roles extends Base
     protected function getValidateRule(?string $action): ?Validate
     {
         // TODO: Implement getValidateRule() method.
+        return null;
     }
 }
 

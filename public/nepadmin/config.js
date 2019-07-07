@@ -17,7 +17,7 @@ layui.define(function(exports) {
     viewLoadBar: true,
     //公用加载的样式
     style: [
-      //layui.cache.base + "css/admin.css"
+      layui.cache.base + "css/admin.css"
     ],
     //是否开启调试模式，开启的话接口异常会抛出异常 URL信息
     debug: layui.cache.debug,
@@ -78,6 +78,14 @@ layui.define(function(exports) {
       request: {
         pageName: 'page', //页码的参数名称，默认：page
         limitName: 'size' //每页数据量的参数名，默认：limit
+      },
+      parseData: function(res){
+          return {
+              "code": res.code,
+              "msg": res.msg,
+              "count": res.result.total,
+              "result": res.result.list,
+          };
       }
     },
     //第三方扩展

@@ -221,7 +221,6 @@ class Auths extends Base
         $menu = new Menu();
         $menu->setOnlyMenu(true);
         $tree = $menu->get($this->token['u_id']);
-        var_dump($tree);
         array_unshift($tree, ['auth_rules'=>'/', 'auth_name' => '首页', 'auth_icon' => 'layui-icon-home']);
         $this->writeJson(Status::CODE_OK, $tree, "success");
     }

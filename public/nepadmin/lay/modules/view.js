@@ -5,12 +5,13 @@ layui
     dropdown: 'lay/modules/dropdown'
   })
   .define(
-    ['jquery', 'laytpl', 'element', 'form', 'loadBar', 'dropdown'],
+    ['jquery', 'laytpl', 'element', 'form', 'loadBar', 'dropdown', 'table'],
     function(exports) {
       var $ = layui.jquery
       var laytpl = layui.laytpl
       var conf = layui.conf
       var loadBar = layui.loadBar
+      var table = layui.table;
       var self = {
         ie8:
           navigator.appName == 'Microsoft Internet Explorer' &&
@@ -517,7 +518,21 @@ layui
       self.request = function(params) {
         params = self.createRequestParams(params)
         $.ajax(params)
-      }
+      };
+      self.renderTable = function(params){
+        params.url = conf.requestUrl + layui.api[params.api];
+        params.headers = conf.requestHeaders || {};
+
+        if ($.isFunction(conf.table.parseData)){
+            params.parseData = conf.table.parseData;
+        }
+
+        params.response = $.extend({}, conf.response, {
+          statusCode : conf.response.statusCode.ok
+        });
+
+        table.render(params);
+      };
 
       exports('view', self)
     }

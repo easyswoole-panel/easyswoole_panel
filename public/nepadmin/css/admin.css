@@ -94,6 +94,10 @@ html,
     white-space:normal;
 }
 */
+.layui-table-cell{
+  line-height: 30px !important;
+  height: 30px !important;
+}
 
 #app-header .layui-nav-bar,
 .layui-bg-black {
@@ -234,9 +238,6 @@ html,
   border-color: #eee;
 }
 
-.layui-table[lay-skin='line'] td,
-.layui-table[lay-skin='line'] th {
-}
 .nepadmin-table-full {
   padding: 0;
 }

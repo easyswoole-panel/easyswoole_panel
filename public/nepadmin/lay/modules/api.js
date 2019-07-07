@@ -12,6 +12,11 @@ layui.define([], function (exports) {
         addAuth: 'auths/add',
         getAllAuth: 'auths/getAll',
 
+        // 角色管理
+        addRole: 'roles/add',
+        getAllRole: 'roles/getAll',
+        getRoleInfo: 'roles/getOne',
+
         // 系统管理
         clearCache: 'system/clearCache',
         showCache: 'system/showCache',
