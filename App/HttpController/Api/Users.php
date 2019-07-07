@@ -239,6 +239,7 @@ class Users extends Base
         $userBean  = new UsersBean([
             'u_account' => $this->request()->getRequestParam('u_account')
         ]);
+
         $user = $userModel->getOneByAccount($userBean);
 
         if ($user === null){

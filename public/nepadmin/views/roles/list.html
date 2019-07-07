@@ -1,0 +1,67 @@
+<link rel="stylesheet" href="./nepadmin/css/formSelects.css" media="all">
+<div class="layui-fluid" lay-title="角色管理">
+    <div class="layui-row layui-col-space15">
+
+        <!-- 添加角色 -->
+        <div class="layui-col-md6">
+            <form class="layui-card layui-form" layui-filter="add-role">
+                <div class="layui-card-header">添加角色</div>
+                <div class="layui-card-body layui-row layui-col-space10">
+                    <div class="layui-col-md12">
+                        <input type="text" name="auth_name" placeholder="角色名" autocomplete="off" lay-verify="required" class="layui-input">
+                    </div>
+                    <div class="layui-col-md12">
+                        <select name="role_auth" xm-select="role_auth" xm-select-search="" xm-select-search-type="dl" id="role_auth">
+                        </select>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button class="layui-btn" lay-submit lay-filter="add-role">立即提交</button>
+                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!-- 添加角色结束 -->
+
+        <div class="layui-col-md6">
+        </div>
+    </div>
+
+</div>
+
+<script>
+    layui.use(['admin', 'form', 'jquery', 'laytpl', 'formSelects'], function (admin, form) {
+        var $ = layui.jquery;
+        var element = layui.element;
+        var laytpl = layui.laytpl;
+        var formSelects = layui.formSelects;
+
+        // 加载权限列表
+        admin.post({
+            api: 'getAllAuth',
+            success:function (res) {
+                if (res.result.list.length > 0){
+                    let html = "";
+                    $.each(res.result.list, function (index, item) {
+                        html += '<option value="'+item.auth_id+'">'+item.auth_name+'</option>';
+                    });
+                    $("#role_auth").html(html);
+                }
+
+                formSelects.render();
+                form.render();
+            }
+        });
+
+        // 添加角色添加
+        form.on('submit(add-role)', function (data) {
+            console.log(data.field);
+            return false;
+        });
+
+        formSelects.render();
+        form.render();
+    });
+</script>

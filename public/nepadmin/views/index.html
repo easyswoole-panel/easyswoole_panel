@@ -434,10 +434,11 @@
 
 <script>
   layui.use(
-    ['admin', 'echarts', 'element', 'helper', 'table', 'util'],
+    ['admin', 'echarts', 'element', 'helper', 'table', 'util', 'siam'],
     function(admin, echarts, element, helper, table, util) {
       var $ = layui.jquery
-      var view = $('#VIEW-chart-index')
+      var view = $('#VIEW-chart-index');
+      var siam = layui.siam;
       element.render('progress')
 
       createChart()

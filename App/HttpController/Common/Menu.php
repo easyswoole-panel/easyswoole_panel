@@ -62,8 +62,8 @@ class Menu
                 }
             }
             $tem = $this->auth_list[$value['id']];
-            if ( isset($value['child']) ){
-                unset($tem['auth_rules']);
+            if ( isset($value['child'] ) ){
+                // unset($tem['auth_rules']);
                 $tem['childs'] = $this->makeTree($value['child']);
             }
             $return[] = $tem;

@@ -16,6 +16,7 @@ layui.define('conf', function(exports){
             if (token===undefined){
                 return null;
             }
+            console.log(token);
             var tokenArr = token.split(".");
             var tokenData = tokenArr[1];
             tokenData = tokenData.replace(/_b_/g,"=");

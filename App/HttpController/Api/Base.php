@@ -97,8 +97,10 @@ abstract class Base extends \EasySwoole\Http\AbstractInterface\Controller
         if ($this->shouldVifPath($path) == false){
             return true;
         }
+
         // 从缓存拿 没有就从数据库读取 初始化
         $policy = Cache::getInstance()->get('policy_'.$u_id);
+
         if($policy === null){
             $policy = new Policy();
             // 用户权限
@@ -128,9 +130,9 @@ abstract class Base extends \EasySwoole\Http\AbstractInterface\Controller
         $cache = Cache::getInstance();
         $authRes = $cache->get('shouldvif_api_'.md5($path));
         if ($authRes === null){
-            echo "权限没有缓存 需要查询\n";
             $authModel = new AuthsModel(Mysql::defer('mysql'));
             $auth = $authModel->getOneByRules(new AuthsBean(['auth_rules' => $path]));
+            // 没有设置该api规则 所以不需要验证
             if ($auth===null){
                 $cache->set('shouldvif_api_'.md5($path),  false, 3*60);
                 return false;

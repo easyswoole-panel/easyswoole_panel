@@ -104,7 +104,7 @@ class EasySwooleEvent implements Event
     public static function onRequest(Request $request, Response $response): bool
     {
         $allow_origin = array(
-            'http://192.168.23.128',
+            'http://192.168.108.131',
         );
 
         $origin = $request->getHeader('origin');

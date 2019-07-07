@@ -42,7 +42,7 @@ class Auths extends Base
 		$db = Mysql::defer('mysql');
 		$param = $this->request()->getRequestParam();
 		$model = new AuthsModel($db);
-		$bean = new AuthsBean();
+		$bean  = new AuthsBean();
 		$bean->setAuthName($param['auth_name']);
 		$bean->setAuthRules($param['auth_rules']);
 		$bean->setAuthIcon($param['auth_icon']);
@@ -167,8 +167,8 @@ class Auths extends Base
 	{
 		$db = Mysql::defer('mysql');
 		$param = $this->request()->getRequestParam();
-		$page = (int)$param['page']??1;
-		$limit = (int)$param['limit']??20;
+		$page = (int)($param['page']??1);
+		$limit = (int)($param['limit']??20);
 		$model = new AuthsModel($db);
 		$data = $model->getAll($page, $param['keyword']??null, $limit);
 		$this->writeJson(Status::CODE_OK, $data, 'success');
@@ -221,6 +221,7 @@ class Auths extends Base
         $menu = new Menu();
         $menu->setOnlyMenu(true);
         $tree = $menu->get($this->token['u_id']);
+        var_dump($tree);
         array_unshift($tree, ['auth_rules'=>'/', 'auth_name' => '首页', 'auth_icon' => 'layui-icon-home']);
         $this->writeJson(Status::CODE_OK, $tree, "success");
     }

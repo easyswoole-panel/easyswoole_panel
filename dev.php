@@ -29,7 +29,7 @@ return [
     ],
     'MYSQL' => [
         //数据库配置
-        'host'                 => '192.168.23.1',//数据库连接ip
+        'host'                 => '192.168.254.1',//数据库连接ip
         'user'                 => 'root',//数据库用户名
         'password'             => 'root',//数据库密码
         'database'             => 'siam_admin',//数据库

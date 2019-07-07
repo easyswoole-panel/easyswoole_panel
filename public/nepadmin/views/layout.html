@@ -106,6 +106,9 @@
                     if(!data || data.length == 0) return '';
                     var html = '<dl class="layui-nav-child">';
                     layui.each(data,function(i,child){
+                        if (child.childs){
+                            child.auth_rules == '';
+                        }
                         html += '<dd><a style="padding-left:'+(index == 0 ? 50 : 50 + index * 20)+'px" target="'+(child.target||'')+'" lay-href="'+ (child.auth_rules||'') +'">' + child.auth_name + '</a>';
                         if(child.childs) html += __createSlidebar(child.childs,index+1);
                         html += '</dd>';
@@ -116,6 +119,9 @@
                 layui.each(d,function(i,child){
             }}
             <li class="layui-nav-item">
+                {{# if (child.childs && child.childs.length > 0){ }}
+                {{# child.auth_rules = null; }}
+                {{# } }}
                 <a lay-href="{{child.auth_rules||''}}" target="{{child.target||''}}" title="{{child.auth_name}}"><i class="layui-icon {{child.auth_icon}}"></i>{{child.auth_name}} {{# if(child.notice){ }}<span class="layui-badge">{{ child.notice }}</span>{{# } }}</a>
                 {{ __createSlidebar(child.childs,0) }}
             </li>

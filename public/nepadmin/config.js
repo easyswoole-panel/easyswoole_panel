@@ -35,7 +35,7 @@ layui.define(function(exports) {
 
     },
     //request 基础URL
-    requestUrl: 'http://192.168.23.128:9501/api/',
+    requestUrl: 'http://192.168.108.131:9501/api/',
     //独立页面路由，可随意添加（无需写参数）
     indPage: [
       '/user/login', //登入页
@@ -92,7 +92,9 @@ layui.define(function(exports) {
       echarts: 'lay/extends/echarts',
       echartsTheme: 'lay/extends/echartsTheme',
       //复制内容到剪贴板
-      clipboard: 'lay/extends/clipboard'
+      clipboard: 'lay/extends/clipboard',
+      // select多选
+      formSelects: 'lay/extends/formSelects-v4'
     }
   })
 })
