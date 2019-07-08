@@ -1088,12 +1088,8 @@ textarea::-webkit-input-placeholder {
   border: none !important;
 }
 .layui-layer-msg .layui-layer-content {
-  padding: 10px 16px;
   border-radius: 4px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  /*
-    padding:10px 20px 10px 55px;
-    */
 }
 .layui-layer-dialog .layui-layer-content .layui-layer-ico {
   font-family: 'layui-icon', 'nep-icon' !important;

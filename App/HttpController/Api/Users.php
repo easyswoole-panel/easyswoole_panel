@@ -2,6 +2,8 @@
 
 namespace App\HttpController\Api;
 
+use App\Model\System\SystemBean;
+use App\Model\System\SystemModel;
 use EasySwoole\EasySwoole\Config;
 use EasySwoole\MysqliPool\Mysql;
 use App\Model\Users\UsersBean;
@@ -44,26 +46,39 @@ class Users extends Base
 	 * @author: AutomaticGeneration < 1067197739@qq.com >
 	 */
 	public function add()
-	{
-		$db = Mysql::defer('mysql');
-		$param = $this->request()->getRequestParam();
-		$model = new UsersModel($db);
-		$bean = new UsersBean();
+    {
+        $db    = Mysql::defer('mysql');
+        $param = $this->request()->getRequestParam();
+        $model = new UsersModel($db);
+        $bean  = new UsersBean();
+
+        $systemModel = new SystemModel($db);
+
+        // 如果存在并发 则在后续再拼接随机内容当账号 建议1~2位数字
+        $account = $systemModel->getNewAccount() ?? time();
+
+        $pUserInfo = $model->getOne(new UsersBean(['u_id' =>$this->token['u_id']]));
+
 		$bean->setUPassword($param['u_password']);
 		$bean->setUName($param['u_name']);
-		$bean->setUAccount($param['u_account']);
-		$bean->setPUId($param['p_u_id']);
+		$bean->setUAccount($account);
+		$bean->setPUId($this->token['u_id']);
 		$bean->setRoleId($param['role_id']);
-		$bean->setUStatus($param['u_status']);
-		$bean->setULevelLine($param['u_level_line']);
-		$bean->setLastLoginIp($param['last_login_ip']);
-		$bean->setLastLoginTime($param['last_login_time']);
-		$bean->setCreateTime($param['create_time']);
-		$bean->setUpdateTime($param['update_time']);
-		$bean->setUAuth($param['u_auth']);
+		$bean->setUStatus(1);
+		$bean->setULevelLine($pUserInfo->getULevelLine());
+		$bean->setLastLoginIp($param['last_login_ip'] ?? '');
+		$bean->setLastLoginTime($param['last_login_time'] ?? time());
+		$bean->setCreateTime(time());
+		$bean->setUpdateTime(time());
+		$bean->setUAuth($param['u_auth'] ?? '');
+
 		$rs = $model->add($bean);
+
 		if ($rs) {
 		    $bean->setUId($db->getInsertId());
+		    // 更新层级链
+            $updateRes = $model->update($bean, ['u_level_line' => $bean->getULevelLine()."-". $bean->getUId()]);
+            if (!$updateRes) $this->writeJson(Status::CODE_BAD_REQUEST, [], $db->getLastError());
 		    $this->writeJson(Status::CODE_OK, $bean->toArray(), "success");
 		} else {
 		    $this->writeJson(Status::CODE_BAD_REQUEST, [], $db->getLastError());
@@ -181,8 +196,8 @@ class Users extends Base
 	{
 		$db = Mysql::defer('mysql');
 		$param = $this->request()->getRequestParam();
-		$page = (int)$param['page']??1;
-		$limit = (int)$param['limit']??20;
+		$page = ((int)$param['page'])??1;
+		$limit = ((int)$param['limit'])??20;
 		$model = new UsersModel($db);
 		$data = $model->getAll($page, $param['keyword']??null, $limit);
 		$this->writeJson(Status::CODE_OK, $data, 'success');

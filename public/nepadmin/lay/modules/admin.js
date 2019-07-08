@@ -258,6 +258,10 @@ layui
         layer.open($.extend(defaultParams, params))
         return
       }
+      if (params.content !== undefined){
+        layer.open($.extend(defaultParams, params));
+        return
+      }
 
       view.tab.del(url)
 

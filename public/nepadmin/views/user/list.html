@@ -1,0 +1,247 @@
+<link rel="stylesheet" href="./nepadmin/css/formSelects.css" media="all">
+<style>
+    .xm-select-dl{
+        top:unset !important;
+    }
+</style>
+<div class="layui-fluid" id="VIEW-list-table" lay-title="用户列表">
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-md10">
+            <div class="layui-card">
+                <div class="layui-card-body nepadmin-pad-l10 nepadmin-pad-r10">
+                    <div class="layui-btn-container">
+                        <div class="layui-btn layui-btn-sm table-action" data-type='add' style="margin-bottom: 0;">添加用户</div>
+                    </div>
+                    <table id="list-table" lay-filter="list-table"></table>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md2">
+            <div class="layui-card">
+                <div class="layui-card-header">筛选数据</div>
+                <div class="layui-card-body">
+                    <form class="layui-row layui-col-space10 layui-form">
+                        <div class="layui-col-md12 layui-col-xs4">
+                            <input type="text" class="layui-input" name="u_name" placeholder="用户名" >
+                        </div>
+                        <div class="layui-col-md12 layui-col-xs12">
+                            <div class="layui-row layui-col-space10">
+                                <div class="layui-col-xs6">
+                                    <div class="layui-btn layui-btn-sm layui-btn-fluid" lay-submit lay-filter="search-user">筛选</div>
+                                </div>
+                                <div class="layui-col-xs6">
+                                    <button type="reset" class="layui-btn layui-btn-sm layui-btn-fluid layui-btn-primary">重置</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="layui-card nepadmin-font-12">
+                <div class="layui-card-header">
+                    <i class="layui-icon">&#xe78c;</i> 帮助中心 </div>
+                <div class="layui-card-body">
+                    <p>操作指引等等</p>
+                    <p class="nepadmin-c-gray">吧啦吧啦~</p>
+                    <hr/>
+                    <p><a>如何新建／发布？</a></p>
+                    <p><a>删除时注意事项？</a></p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- 用户列表bar tool -->
+<script type="text/html" id="user_bar">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<!-- 添加用户面板 -->
+<div id="add_user_bd" hidden>
+    <div style="padding: 10px;">
+        <form class="layui-form" action="">
+            <div class="layui-form-item">
+                <label class="layui-form-label">用户名</label>
+                <div class="layui-input-block">
+                    <input type="text" name="u_name" required  lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">密码</label>
+                <div class="layui-input-block">
+                    <input type="password" name="u_password" required  lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">角色</label>
+                <div class="layui-input-block">
+                    <select name="role_id" xm-select="u_role" xm-select-search="" xm-select-search-type="dl" lay-verify="required" id="u_role">
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">权限</label>
+                <div class="layui-input-block">
+                    <select name="u_auth" xm-select="u_auth" xm-select-search="" xm-select-search-type="dl" id="u_auth">
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="add-user">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<script>
+    layui.use(['admin', 'table', 'form', 'dropdown', 'jquery', 'formSelects'], function (admin, table, form, dropdown, $) {
+        var view = $('#VIEW-list-table');
+
+        var formSelects = layui.formSelects;
+        var roleName = [];
+        var authList = [];
+        admin.post({
+            api: 'getAllRole',
+            async: false,
+            success:function (res) {
+                if (!res.result.list){ layer.alert('获取角色列表失败'); }
+                let html = '';
+                $.each(res.result.list, function (index, item) {
+                    roleName[item.role_id] = item.role_name;
+                    html += '<option value="'+item.role_id+'">'+item.role_name+'</option>';
+                });
+                $('#u_role').html(html);
+            }
+        });
+
+        admin.post({
+            api: 'getAllAuth',
+            async: false,
+            success:function (res) {
+                if (!res.result.list){ layer.alert('获取权限列表失败'); }
+                let html = '';
+                $.each(res.result.list, function (index, item) {
+                    authList[item.auth_id] = item;
+                    html += '<option value="'+item.auth_id+'">'+item.auth_name+'</option>';
+                });
+                $('#u_auth').html(html);
+            }
+        });
+
+        formSelects.render();
+
+        var tableFilter = 'list-table';
+        form.render();
+        admin.renderTable({
+            elem: '[lay-filter="' + tableFilter + '"]',
+            id: 'user-table',
+            api: 'getUserlist',
+            page: true,
+            cols: [[
+                { title: '用户id', field: 'u_id', fixed: true},
+                { title: '用户名', field: 'u_name'},
+                { title: '角色', field: 'role_list',templet: function(d){
+                    // 角色id ,分割 显示标签名
+                    let tem = d.role_id.split(",");
+                    let html = '';
+                    $.each(tem,function(index,value){
+                        if ( value !== ''  && value !== null){
+                            html += '<span class="layui-badge layui-bg-blue">'+ roleName[value] +'</span>  '
+                        }
+                    });
+                    return html;
+                }},
+                { title: '用户账号', field: 'u_account'},
+                { title: '用户状态', field: 'u_status',templet: function(d){
+                    return d.u_status == 1 ? '正常' : '禁用';
+                }},
+                { title: '', fixed: 'right', toolbar:'#user_bar'},
+
+            ]]
+        });
+
+        // 顶部按钮
+        $('body').on('click', '.table-action', function () {
+            let type = $(this).data('type');
+
+            switch (type) {
+                case 'add':
+                    let addUserBd = $('#add_user_bd');
+                    let html = addUserBd.html();
+                    if (html === ''){return false;} // 没有判断 则会因为tab的伪刷新 导致监听n多次点击按钮事件 打开n个弹窗
+                    addUserBd.html('');
+                    admin.popup({
+                        content: html,
+                        title: '添加用户',
+                        area: ['70%', '70%'],
+                        shadeClose: false,
+                        cancel: function(index, layero){
+                            $("#add_user_bd").html(this.content);
+                        }
+                    });
+                    break;
+            }
+        });
+
+        // 监听添加用户
+        form.on('submit(add-user)', function (data) {
+            admin.post({
+                api: 'addUser',
+                data: data.field,
+                success:function (res) {
+                    layer.msg('添加成功', {
+                        icon:1,
+                        success :function (index, layero) {
+                            setTimeout(function(){
+                                layer.closeAll();
+                                layui.view.tab.refresh();
+                            },800);
+                        }
+                    });
+                }
+            });
+            return false;
+        });
+
+        // 监听筛选用户
+        form.on('submit(search-user)', function (data) {
+            table.reload( 'user-table', {
+                where: {
+                    keyword:data.field.u_name
+                }
+                ,page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+            return false;
+        });
+
+        //监听工具条
+        table.on('tool(list-table)', function(obj){
+            let data = obj.data;
+            let layEvent = obj.event;
+            let tr = obj.tr;
+
+            layer.msg('还没有，(ಥ﹏ಥ)~' , {
+                icon: 3
+            });
+
+            if(layEvent === 'detail'){
+                //do somehing
+            } else if(layEvent === 'del'){
+
+            } else if(layEvent === 'edit'){
+
+            }
+        });
+
+    })
+</script>

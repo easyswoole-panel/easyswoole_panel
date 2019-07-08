@@ -16,10 +16,17 @@ layui.define([], function (exports) {
         addRole: 'roles/add',
         getAllRole: 'roles/getAll',
         getRoleInfo: 'roles/getOne',
+        ediRole: 'roles/update',
+        delRole: 'roles/delete',
 
         // 系统管理
         clearCache: 'system/clearCache',
         showCache: 'system/showCache',
+
+        // 用户管理
+        getUserlist: 'users/getAll',
+        addUser: 'users/add',
+
 
     });
 });

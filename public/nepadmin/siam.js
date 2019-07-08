@@ -16,7 +16,6 @@ layui.define('conf', function(exports){
             if (token===undefined){
                 return null;
             }
-            console.log(token);
             var tokenArr = token.split(".");
             var tokenData = tokenArr[1];
             tokenData = tokenData.replace(/_b_/g,"=");
@@ -25,9 +24,9 @@ layui.define('conf', function(exports){
             var json =window.atob(tokenData);
             var obj = JSON.parse(json);
             var timestamp = Date.parse(new Date())/1000;
-
-            // 在此之前不可用
-            if (obj.nbf !== undefined && obj.nbf > timestamp){
+            console.log(obj);
+            // 在此之前不可用 nbf-10 兼容客户端时间戳慢了几秒
+            if (obj.nbf !== undefined && (obj.nbf - 10) > timestamp){
                 return 'NOTBEFORE';
             }
             // 是否已经过期
