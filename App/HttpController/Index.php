@@ -9,6 +9,8 @@
 namespace App\HttpController;
 
 
+use App\Model\Users\UsersBean;
+use EasySwoole\FastCache\Cache;
 use EasySwoole\Http\AbstractInterface\Controller;
 
 class Index  extends Controller
@@ -16,7 +18,9 @@ class Index  extends Controller
 
     function index()
     {
-        echo "11\n";
+        Cache::getInstance()->set('test_siam', new UsersBean(['u_id' => 1]));
+
+        var_dump(Cache::getInstance()->get('test_siam'));
         // TODO: Implement index() method.
         // $db = \EasySwoole\MysqliPool\Mysql::defer('mysql');
         //

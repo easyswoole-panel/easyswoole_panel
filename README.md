@@ -19,3 +19,15 @@
  // version: Date.parse(new Date()),
  debug: false
  ```
+
+# 作者
+
+Siam - 宣言 - QQ 59419979
+
+可以在easyswoole 1群、2群(管理员)找到俺
+
+# 截图演示
+
+![Image text](./public/temimg/easysiam.jpg)
+![Image text](./public/temimg/easysiam2.jpg)
+![Image text](./public/temimg/easysiam3.jpg)

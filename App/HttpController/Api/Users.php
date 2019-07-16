@@ -268,7 +268,7 @@ class Users extends Base
         $jwtConfig = $config->getConf('JWT');
         $token = JWT::getInstance()->setSub($jwtConfig['sub'])
             ->setIss($jwtConfig['iss'])
-            ->setExp($jwtConfig['exp'] + time())
+            ->setExp($jwtConfig['exp'])
             ->setSecretKey($jwtConfig['key'])
             ->setNbf(($jwtConfig['nbf'] !== null) ? time() + $jwtConfig['nbf'] : time())
             ->setWith([
