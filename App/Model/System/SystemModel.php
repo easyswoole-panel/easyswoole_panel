@@ -2,6 +2,9 @@
 
 namespace App\Model\System;
 
+use EasySwoole\Mysqli\Exceptions\ConnectFail;
+use EasySwoole\Mysqli\Exceptions\PrepareQueryFail;
+
 /**
  * Class SystemModel
  * Create With Automatic Generator
@@ -91,5 +94,24 @@ class SystemModel extends \App\Model\BaseModel
 		}
 		return $this->getDb()->where($this->primaryKey, $bean->getId())->update($this->table, $data);
 	}
+
+    /**
+     * 获取新账号
+     */
+    public function getNewAccount()
+    {
+        $res = $this->getDb()->where($this->primaryKey, 1)->getOne($this->table,  '*');
+
+        if (!$res) {
+            return null;
+        }
+
+        $bean = new SystemBean($res);
+
+        $res = $this->getDb()->setInc($this->table, 'user_next_id');
+
+        if (!$res) return null;
+        return $bean->getUserNextId();
+    }
 }
 
