@@ -11,6 +11,9 @@
                         <input type="text" name="role_name" placeholder="角色名" autocomplete="off" lay-verify="required" class="layui-input">
                     </div>
                     <div class="layui-col-md12">
+                        <input type="hidden" name="role_id" placeholder="角色id" autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-col-md12">
                         <select name="role_auth" xm-select="role_auth" xm-select-search="" xm-select-search-type="dl" id="role_auth">
                         </select>
                     </div>
@@ -27,7 +30,7 @@
 
         <!-- 角色列表 -->
         <div class="layui-col-md6">
-            <div class="layui-card" >
+            <div class="layui-card">
                 <div class="layui-card-header">角色列表</div>
                 <div class="layui-card-body layui-row layui-col-space10">
                     <div class="layui-col-md12">
@@ -46,13 +49,15 @@
 </script>
 
 <script>
-    layui.use(['admin', 'table', 'form', 'jquery', 'laytpl', 'formSelects'], function (admin, form) {
+    layui.use(['admin', 'table', 'form', 'jquery', 'laytpl', 'formSelects'], function (admin) {
         var $ = layui.jquery;
         var element = layui.element;
         var laytpl = layui.laytpl;
         var formSelects = layui.formSelects;
         var table = layui.table;
         var rolebd_status_value = 'add';
+        var form = layui.form;
+
         // 加载权限列表
         admin.post({
             api: 'getAllAuth',
@@ -88,8 +93,6 @@
         });
         // 添加角色添加
         form.on('submit(add-role)', function (data) {
-            console.log(rolebd_status_value);
-            return false;
             switch (rolebd_status_value) {
                 case 'add':
                     admin.post({
@@ -108,7 +111,20 @@
                     });
                     break;
                 case 'edit':
-                    alert("现在在修改");
+                    admin.post({
+                        api: "ediRole",
+                        data: data.field,
+                        success:function (res) {
+                            layer.alert("编辑角色成功",{
+                                yes:function () {
+                                    layui.view.tab.refresh();
+                                    layer.closeAll();
+                                    formSelects.render();
+                                    form.render();
+                                }
+                            })
+                        }
+                    });
                     break;
             }
 
@@ -127,9 +143,21 @@
             if(layEvent === 'detail'){
                 //do somehing
             } else if(layEvent === 'del'){
-                layer.msg("暂不支持");return false;
-                layer.confirm('真的删除行么', function(index){
-
+                layer.confirm('真的删除行么?用户权限会失效的!', function(index){
+                    admin.post({
+                        api: "delRole",
+                        data: data,
+                        success:function (res) {
+                            layer.alert("删除角色成功",{
+                                yes:function () {
+                                    layui.view.tab.refresh();
+                                    layer.closeAll();
+                                    formSelects.render();
+                                    form.render();
+                                }
+                            })
+                        }
+                    });
                 });
             } else if(layEvent === 'edit'){
                 // 请求信息接口，然后打开弹窗
@@ -140,13 +168,24 @@
                     },
                     success:function (res) {
                         rolebd_status_value = 'edit';
-                        $('#rolebd_status').html("修改角色 - "+res.result.role_name);
+                        $('#rolebd_status').html("修改角色 - " + res.result.role_name + " <div class='layui-btn layui-btn-xs' id='reset_add_role'>恢复添加</div>");
                         $("input[name=role_name]").val(res.result.role_name);
+                        $("input[name=role_id]").val(res.result.role_id);
                         form.render();
                         formSelects.value('role_auth', res.result.role_auth.split(","));
                     }
                 })
             }
         });
+
+        // 恢复编辑面板为添加
+        $('body').on('click', '#reset_add_role', function () {
+            $('#rolebd_status').html("添加角色");
+            rolebd_status_value = 'add';
+            $("input[name=role_name]").val('');
+            formSelects.value('role_auth', []);
+            form.render();
+        })
+
     });
 </script>

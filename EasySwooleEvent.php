@@ -139,6 +139,7 @@ class EasySwooleEvent implements Event
 
         $allow_origin = array(
             'http://192.168.108.131',
+            'http://192.168.23.128',
         );
 
         $origin = $request->getHeader('origin');
