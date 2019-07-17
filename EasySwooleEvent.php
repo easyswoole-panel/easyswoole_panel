@@ -9,6 +9,9 @@
 namespace EasySwoole\EasySwoole;
 
 
+use App\IpList;
+use Co\Server;
+use EasySwoole\Component\Process\AbstractProcess;
 use EasySwoole\Component\Process\Exception;
 use EasySwoole\EasySwoole\Swoole\EventRegister;
 use EasySwoole\EasySwoole\AbstractInterface\Event;
@@ -34,6 +37,24 @@ class EasySwooleEvent implements Event
     public static function mainServerCreate(EventRegister $register)
     {
         // TODO: Implement mainServerCreate() method.
+
+        // // 开启IP限流
+        // IpList::getInstance();
+        // $class = new class('IpAccessCount') extends AbstractProcess{
+        //     protected function run($arg)
+        //     {
+        //         $this->addTick(5*1000, function (){
+        //             /**
+        //              * 正常用户不会有一秒超过6次的api请求
+        //              * 做列表记录并清空
+        //              */
+        //             $list = IpList::getInstance()->accessList(30);
+        //             IpList::getInstance()->clear();
+        //         });
+        //     }
+        // };
+        // ServerManager::getInstance()->getSwooleServer()->addProcess($class->getProcess());
+
         $mysqlConfig = new \EasySwoole\Mysqli\Config(Config::getInstance()->getConf('MYSQL'));
         try {
             \EasySwoole\MysqliPool\Mysql::getInstance()->register('mysql', $mysqlConfig);
@@ -99,10 +120,23 @@ class EasySwooleEvent implements Event
         }
 
 
+
     }
 
     public static function onRequest(Request $request, Response $response): bool
     {
+        // IP限流
+        // $fd = $request->getSwooleRequest()->fd;
+        // $ip = ServerManager::getInstance()->getSwooleServer()->getClientInfo($fd)['remote_ip'];
+        // if (IpList::getInstance()->access($ip) > 3) {
+        //     /**
+        //      * 直接强制关闭连接
+        //      */
+        //     ServerManager::getInstance()->getSwooleServer()->close($fd);
+        //     echo '被拦截'.PHP_EOL;
+        //     return false;
+        // }
+
         $allow_origin = array(
             'http://192.168.108.131',
         );
