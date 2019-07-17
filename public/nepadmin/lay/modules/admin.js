@@ -4,7 +4,7 @@ layui
     api: 'lay/modules/api',
     view: 'lay/modules/view'
   })
-  .define(['conf', 'view', 'api', 'jquery'], function(exports) {
+  .define(['conf', 'view', 'api', 'jquery', 'siam'], function(exports) {
     POPUP_DATA = {}
     var conf = layui.conf
     var view = layui.view

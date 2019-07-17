@@ -280,7 +280,7 @@ class Users extends Base
         $this->writeJson(Status::CODE_OK, [
             'token'    => $token,
             'userInfo' => $user->toArray(),
-            'authList' => [],
+            'authList' => $userModel->getAuth($user->getUId()),
         ], '登陆成功');
     }
 }

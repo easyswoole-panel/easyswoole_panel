@@ -350,6 +350,13 @@ layui.use(['admin','helper','util','qrcode','form','siam'],function(admin,helper
                         }
                     }
                 ]);
+                // 储存权限
+                admin.data([
+                    {
+                        key: 'auth',
+                        value: res.result.authList
+                    }
+                ]);
                 admin.navigate('/');
             },
             complete:function(){

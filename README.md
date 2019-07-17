@@ -31,3 +31,24 @@ Siam - 宣言 - QQ 59419979
 ![Image text](./public/temimg/easysiam.jpg)
 ![Image text](./public/temimg/easysiam2.jpg)
 ![Image text](./public/temimg/easysiam3.jpg)
+
+# 权限控制dom
+在权限页面有三个按钮
+```html
+
+<button class="layui-btn" data-siam-auth="!testtets">没有testtets权限则显示</button>
+<button class="layui-btn" data-siam-auth="/api/*">有/api/*权限则显示</button>
+<button class="layui-btn" data-siam-auth="/admin/*">有/admin/*权限则显示</button>
+```
+
+在dom中使用 data-siam-auth='规则名'  视图显示时候则可自动移除没权限的dom
+
+也可以手动调用验证
+```javascript
+// 手动调用验证权限
+if ( layui.siam.vifAuth('/api/system/clearCache')){
+    layer.msg('有/api/system/clearCache的权限');
+}else{
+    layer.msg('没有/api/system/clearCache的权限');
+}
+```

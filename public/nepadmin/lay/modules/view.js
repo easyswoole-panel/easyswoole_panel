@@ -412,6 +412,10 @@ layui
         }
         //重新对面包屑进行渲染
         layui.element.render('breadcrumb', 'nepadmin-breadcrumb')
+
+        // 调用siam的方法 操作渲染data-siam-auth的dom
+        layui.siam.renderAuth();
+
         return { title: title, url: url, htmlElem: htmlElem }
       }
       //解析普通文件
@@ -426,6 +430,8 @@ layui
       self.renderTabs = function(route, callback) {
         var tab = self.tab
         tab.change(route, callback)
+        // 调用siam的方法 操作渲染data-siam-auth的dom
+        layui.siam.renderAuth();
       }
       //加载layout文件
       self.renderLayout = function(callback, url) {

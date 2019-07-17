@@ -175,6 +175,11 @@
                 <div class="layui-card-header">查看缓存</div>
                 <div class="layui-card-body layui-row layui-col-space10">
                     <button class="layui-btn" id="showCache">查看</button>
+
+                    <button class="layui-btn" data-siam-auth="!testtets">没有testtets权限则显示</button>
+                    <button class="layui-btn" data-siam-auth="/api/*">有/api/*权限则显示</button>
+                    <button class="layui-btn" data-siam-auth="/admin/*">有/admin/*权限则显示</button>
+
                     <div id="showCacheRes"></div>
                 </div>
             </div>
@@ -307,6 +312,13 @@
                 }
             })
         });
+
+        // 手动调用验证权限
+        if ( layui.siam.vifAuth('/api/system/clearCache')){
+            layer.msg('有/api/system/clearCache的权限');
+        }else{
+            layer.msg('没有/api/system/clearCache的权限');
+        }
 
     });
 </script>
