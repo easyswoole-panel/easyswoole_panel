@@ -4,13 +4,13 @@
 
 ② 开设网站  指向目录 public目录 纯静态 不加载php
 
-③ es安装 修改dev.php mysql配置  
+③ es安装 (参照es文档安装章节  建议先行运行过hello world 文档过一遍 再尝试本项目) 修改dev.php mysql配置  
 
-④ 导出mysql  在public目录下的sql文件
+④ 导入mysql结构数据  在public目录下的sql文件
 
-⑤ public/nepadmin/config.js搜索 requestUrl  请求url换成你自己的
+⑤ public/nepadmin/config.js搜索 requestUrl  请求url换成你自己的es服务地址  IP:Port
 
-⑥ EasySwooleEvent.php  106行 设置跨域  填写加入 第二步开设的域名  新增
+⑥ EasySwooleEvent.php  106行 设置跨域  填写加入 第二步开设的域名（如果为`*` 则允许所有跨域 不需更改）
 
 ⑦ 管理员账号 1001 123456   测试账号 100083 123456   可以看到测试账号的菜单只有权限管理，点击查看缓存、清除缓存会提示没有权限  （页面权限和接口权限是两回事）
 
