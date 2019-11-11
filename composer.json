@@ -6,7 +6,7 @@
     },
     "require": {
         "php": ">=7.2",
-        "easyswoole/easyswoole": "^3.3.0",
+        "easyswoole/easyswoole": "3.3.0",
 	"easyswoole/mysqli": "1.2.3",
 	"easyswoole/mysqli-pool": "dev-master",
 	"ext-json": "*",
