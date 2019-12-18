@@ -5,7 +5,6 @@ namespace App\HttpController\Api;
 use App\HttpController\Common\Menu;
 use App\Model\System\SystemBean;
 use App\Model\System\SystemModel;
-use EasySwoole\MysqliPool\Mysql;
 use App\Model\Auths\AuthsBean;
 use App\Model\Auths\AuthsModel;
 use EasySwoole\Http\Message\Status;

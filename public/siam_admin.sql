@@ -59,7 +59,7 @@ CREATE TABLE `siam_migrations`  (
 -- ----------------------------
 -- Records of siam_migrations
 -- ----------------------------
-INSERT INTO `siam_migrations` VALUES (20190422152409, 'User', '2019-04-23 10:33:31', '2019-04-23 10:33:31', 0);
+INSERT INTO `siam_migrations` VALUES (20190422152409, 'Users', '2019-04-23 10:33:31', '2019-04-23 10:33:31', 0);
 INSERT INTO `siam_migrations` VALUES (20190422153129, 'Auth', '2019-04-23 10:33:31', '2019-04-23 10:33:31', 0);
 INSERT INTO `siam_migrations` VALUES (20190422153557, 'Role', '2019-04-23 10:33:32', '2019-04-23 10:33:32', 0);
 INSERT INTO `siam_migrations` VALUES (20190422153927, 'System', '2019-04-23 10:33:32', '2019-04-23 10:33:32', 0);

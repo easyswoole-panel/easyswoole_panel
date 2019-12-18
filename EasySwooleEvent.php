@@ -20,9 +20,10 @@ use EasySwoole\FastCache\Exception\RuntimeError;
 use EasySwoole\Http\Message\Status;
 use EasySwoole\Http\Request;
 use EasySwoole\Http\Response;
-use EasySwoole\MysqliPool\MysqlPoolException;
 use EasySwoole\FastCache\CacheProcessConfig;
 use EasySwoole\FastCache\SyncData;
+use EasySwoole\ORM\Db\Connection;
+use EasySwoole\ORM\DbManager;
 use EasySwoole\Utility\File;
 
 class EasySwooleEvent implements Event
@@ -30,8 +31,10 @@ class EasySwooleEvent implements Event
 
     public static function initialize()
     {
-        // TODO: Implement initialize() method.
         date_default_timezone_set('Asia/Shanghai');
+        $configData = Config::getInstance()->getConf('MYSQL');
+        $config = new \EasySwoole\ORM\Db\Config($configData);
+        DbManager::getInstance()->addConnection(new Connection($config));
     }
 
     public static function mainServerCreate(EventRegister $register)
@@ -55,12 +58,6 @@ class EasySwooleEvent implements Event
         // };
         // ServerManager::getInstance()->getSwooleServer()->addProcess($class->getProcess());
 
-        $mysqlConfig = new \EasySwoole\Mysqli\Config(Config::getInstance()->getConf('MYSQL'));
-        try {
-            \EasySwoole\MysqliPool\Mysql::getInstance()->register('mysql', $mysqlConfig);
-        } catch (MysqlPoolException $e) {
-            echo "[Warn] --> mysql池注册失败\n";
-        }
 
         // ***************** 注册fast-cache *****************
         // 每隔5秒将数据存回文件
@@ -138,8 +135,7 @@ class EasySwooleEvent implements Event
         // }
 
         $allow_origin = array(
-            'http://192.168.108.131',
-            'http://192.168.23.128',
+            "http://easyswoole.test"
         );
 
         $origin = $request->getHeader('origin');

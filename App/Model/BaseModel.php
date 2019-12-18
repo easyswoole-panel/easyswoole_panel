@@ -1,26 +1,14 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * Users: Administrator
+ * Date: 2019/12/18 0018
+ * Time: 19:58
+ */
 
 namespace App\Model;
 
-/**
- * BaseModel
- * Class BaseModel
- * Create With Automatic Generator
- */
-class BaseModel
+class BaseModel extends \EasySwoole\ORM\AbstractModel
 {
-	protected $db;
 
-
-	public function __construct(\EasySwoole\Mysqli\Mysqli $dbObject)
-	{
-		$this->db = $dbObject;
-	}
-
-
-	public function getDb(): \EasySwoole\Mysqli\Mysqli
-	{
-		return $this->db;
-	}
 }
-

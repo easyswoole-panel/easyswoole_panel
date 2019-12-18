@@ -2,241 +2,273 @@
 
 namespace App\HttpController\Api;
 
-use App\Model\System\SystemBean;
-use App\Model\System\SystemModel;
+use App\Model\System\SiamSystemModel;
+use App\Model\Users\SiamUserModel;
 use EasySwoole\EasySwoole\Config;
-use EasySwoole\MysqliPool\Mysql;
-use App\Model\Users\UsersBean;
-use App\Model\Users\UsersModel;
+use EasySwoole\Http\Annotation\Param;
 use EasySwoole\Http\Message\Status;
+use EasySwoole\Jwt\Jwt;
 use EasySwoole\Validate\Validate;
-use Siam\JWT;
 
 /**
- * 用户表
  * Class Users
  * Create With Automatic Generator
  */
 class Users extends Base
 {
-	/**
-	 * @api {get|post} /Api/Users/add
-	 * @apiName add
-	 * @apiGroup /Api/Users
-	 * @apiPermission
-	 * @apiDescription add新增数据
-	 * @apiParam {string} u_password 用户密码
-	 * @apiParam {string} u_name 用户名
-	 * @apiParam {string} u_account 用户登录名
-	 * @apiParam {string} p_u_id 上级u_id
-	 * @apiParam {string} role_id
-	 * @apiParam {int} u_status 用户状态 -1删除 0禁用 1正常
-	 * @apiParam {string} u_level_line 用户层级链
-	 * @apiParam {int} last_login_ip 最后登录IP
-	 * @apiParam {int} last_login_time 最后登录时间
-	 * @apiParam {int} create_time 创建时间
-	 * @apiParam {int} update_time 更新时间
-	 * @apiParam {string} u_auth
-	 * @apiSuccess {Number} code
-	 * @apiSuccess {Object[]} data
-	 * @apiSuccess {String} msg
-	 * @apiSuccessExample {json} Success-Response:
-	 * HTTP/1.1 200 OK
-	 * {"code":200,"data":{},"msg":"success"}
-	 * @author: AutomaticGeneration < 1067197739@qq.com >
-	 */
-	public function add()
+    /**
+     * @api {get|post} /Api/Users/add
+     * @apiName add
+     * @apiGroup /Api/Users
+     * @apiPermission
+     * @apiDescription add新增数据
+     * @Param(name="u_id", alias="", required="", lengthMax="11")
+     * @Param(name="u_password", alias="用户密码", required="", lengthMax="32")
+     * @Param(name="u_name", alias="用户名", required="", lengthMax="32")
+     * @Param(name="u_account", alias="用户登录名", required="", lengthMax="32")
+     * @Param(name="p_u_id", alias="上级u_id", required="", lengthMax="10")
+     * @Param(name="role_id", alias="", required="", lengthMax="255")
+     * @Param(name="u_status", alias="用户状态 -1删除 0禁用 1正常", required="", lengthMax="1")
+     * @Param(name="u_level_line", alias="用户层级链", required="", lengthMax="100")
+     * @Param(name="last_login_ip", alias="最后登录IP", required="", lengthMax="20")
+     * @Param(name="last_login_time", alias="最后登录时间", required="", lengthMax="11")
+     * @Param(name="create_time", alias="创建时间", required="", lengthMax="11")
+     * @Param(name="update_time", alias="更新时间", required="", lengthMax="11")
+     * @Param(name="u_auth", alias="", required="", lengthMax="255")
+     * @apiParam {int} u_id
+     * @apiParam {string} u_password 用户密码
+     * @apiParam {string} u_name 用户名
+     * @apiParam {string} u_account 用户登录名
+     * @apiParam {string} p_u_id 上级u_id
+     * @apiParam {string} role_id
+     * @apiParam {int} u_status 用户状态 -1删除 0禁用 1正常
+     * @apiParam {string} u_level_line 用户层级链
+     * @apiParam {string} last_login_ip 最后登录IP
+     * @apiParam {int} last_login_time 最后登录时间
+     * @apiParam {int} create_time 创建时间
+     * @apiParam {int} update_time 更新时间
+     * @apiParam {string} u_auth
+     * @apiSuccess {Number} code
+     * @apiSuccess {Object[]} data
+     * @apiSuccess {String} msg
+     * @apiSuccessExample {json} Success-Response:
+     * HTTP/1.1 200 OK
+     * {"code":200,"data":{},"msg":"success"}
+     * @author: AutomaticGeneration < 1067197739@qq.com >
+     * @throws
+     */
+    public function add()
     {
-        $db    = Mysql::defer('mysql');
         $param = $this->request()->getRequestParam();
-        $model = new UsersModel($db);
-        $bean  = new UsersBean();
 
-        $systemModel = new SystemModel($db);
+        $systemModel = SiamSystemModel::create()->get();
 
         // 如果存在并发 则在后续再拼接随机内容当账号 建议1~2位数字
         $account = $systemModel->getNewAccount() ?? time();
 
-        $pUserInfo = $model->getOne(new UsersBean(['u_id' =>$this->token['u_id']]));
+        $pUserInfo = SiamUserModel::create()->get([
+            'u_id' => $this->token['u_id'],
+        ]);
 
-		$bean->setUPassword($param['u_password']);
-		$bean->setUName($param['u_name']);
-		$bean->setUAccount($account);
-		$bean->setPUId($this->token['u_id']);
-		$bean->setRoleId($param['role_id']);
-		$bean->setUStatus(1);
-		$bean->setULevelLine($pUserInfo->getULevelLine());
-		$bean->setLastLoginIp($param['last_login_ip'] ?? '');
-		$bean->setLastLoginTime($param['last_login_time'] ?? time());
-		$bean->setCreateTime(time());
-		$bean->setUpdateTime(time());
-		$bean->setUAuth($param['u_auth'] ?? '');
-
-		$rs = $model->add($bean);
-
-		if ($rs) {
-		    $bean->setUId($db->getInsertId());
-		    // 更新层级链
-            $updateRes = $model->update($bean, ['u_level_line' => $bean->getULevelLine()."-". $bean->getUId()]);
-            if (!$updateRes) $this->writeJson(Status::CODE_BAD_REQUEST, [], $db->getLastError());
-		    $this->writeJson(Status::CODE_OK, $bean->toArray(), "success");
-		} else {
-		    $this->writeJson(Status::CODE_BAD_REQUEST, [], $db->getLastError());
-		}
-	}
-
-
-	/**
-	 * @api {get|post} /Api/Users/update
-	 * @apiName update
-	 * @apiGroup /Api/Users
-	 * @apiPermission
-	 * @apiDescription update修改数据
-	 * @apiParam {int} u_id 主键id
-	 * @apiParam {string} [u_password] 用户密码
-	 * @apiParam {string} [u_name] 用户名
-	 * @apiParam {string} [u_account] 用户登录名
-	 * @apiParam {string} [p_u_id] 上级u_id
-	 * @apiParam {string} [role_id]
-	 * @apiParam {int} [u_status] 用户状态 -1删除 0禁用 1正常
-	 * @apiParam {string} [u_level_line] 用户层级链
-	 * @apiParam {int} [last_login_ip] 最后登录IP
-	 * @apiParam {int} [last_login_time] 最后登录时间
-	 * @apiParam {int} [create_time] 创建时间
-	 * @apiParam {int} [update_time] 更新时间
-	 * @apiParam {string} [u_auth]
-	 * @apiSuccess {Number} code
-	 * @apiSuccess {Object[]} data
-	 * @apiSuccess {String} msg
-	 * @apiSuccessExample {json} Success-Response:
-	 * HTTP/1.1 200 OK
-	 * {"code":200,"data":{},"msg":"success"}
-	 * @author: AutomaticGeneration < 1067197739@qq.com >
-	 */
-	public function update()
-	{
-		$db = Mysql::defer('mysql');
-		$param = $this->request()->getRequestParam();
-		$model = new UsersModel($db);
-		$bean = $model->getOne(new UsersBean(['u_id' => $param['u_id']]));
-		if (empty($bean)) {
-		    $this->writeJson(Status::CODE_BAD_REQUEST, [], '该数据不存在');
-		    return false;
-		}
-		$updateBean = new UsersBean();
-
-		$updateBean->setUPassword($param['u_password']??$bean->getUPassword());
-		$updateBean->setUName($param['u_name']??$bean->getUName());
-		$updateBean->setUAccount($param['u_account']??$bean->getUAccount());
-		$updateBean->setPUId($param['p_u_id']??$bean->getPUId());
-		$updateBean->setRoleId($param['role_id']??$bean->getRoleId());
-		$updateBean->setUStatus($param['u_status']??$bean->getUStatus());
-		$updateBean->setULevelLine($param['u_level_line']??$bean->getULevelLine());
-		$updateBean->setLastLoginIp($param['last_login_ip']??$bean->getLastLoginIp());
-		$updateBean->setLastLoginTime($param['last_login_time']??$bean->getLastLoginTime());
-		$updateBean->setCreateTime($param['create_time']??$bean->getCreateTime());
-		$updateBean->setUpdateTime($param['update_time']??$bean->getUpdateTime());
-		$updateBean->setUAuth($param['u_auth']??$bean->getUAuth());
-		$rs = $model->update($bean, $updateBean->toArray([], $updateBean::FILTER_NOT_EMPTY));
-		if ($rs) {
-		    $this->writeJson(Status::CODE_OK, $rs, "success");
-		} else {
-		    $this->writeJson(Status::CODE_BAD_REQUEST, [], $db->getLastError());
-		}
-	}
+        $data  = [
+            'u_id'            => $param['u_id'],
+            'u_password'      => $param['u_password'] ?? 'e10adc3949ba59abbe56e057f20f883e',
+            'u_name'          => $param['u_name'] ?? '',
+            'u_account'       => $param['u_account'],
+            'p_u_id'          => $param['p_u_id'] ?? '',
+            'role_id'         => $param['role_id'],
+            'u_status'        => $param['u_status'] ?? '1',
+            'u_level_line'    => $pUserInfo->u_level_line,
+            'last_login_ip'   => $param['last_login_ip'] ?? '0',
+            'last_login_time' => $param['last_login_time'] ?? '0',
+            'create_time'     => $param['create_time'] ?? '0',
+            'update_time'     => $param['update_time'] ?? '0',
+            'u_auth'          => $param['u_auth'],
+        ];
+        $model = new SiamUserModel($data);
+        $rs    = $model->save();
+        if ($rs) {
+            $this->writeJson(Status::CODE_OK, $model->toArray(), "success");
+            // 更新层级链
+            $model->u_level_line = $model->u_level_line."-".$model->u_id;
+            $updateRes           = $model->save();
+            if (!$updateRes) $this->writeJson(Status::CODE_BAD_REQUEST, [], $model->lastQueryResult()->getLastError());
+            $this->writeJson(Status::CODE_OK, $model->toArray(), "success");
+        } else {
+            $this->writeJson(Status::CODE_BAD_REQUEST, [], $model->lastQueryResult()->getLastError());
+        }
+    }
 
 
-	/**
-	 * @api {get|post} /Api/Users/getOne
-	 * @apiName getOne
-	 * @apiGroup /Api/Users
-	 * @apiPermission
-	 * @apiDescription 根据主键获取一条信息
-	 * @apiParam {int} u_id 主键id
-	 * @apiSuccess {Number} code
-	 * @apiSuccess {Object[]} data
-	 * @apiSuccess {String} msg
-	 * @apiSuccessExample {json} Success-Response:
-	 * HTTP/1.1 200 OK
-	 * {"code":200,"data":{},"msg":"success"}
-	 * @author: AutomaticGeneration < 1067197739@qq.com >
-	 */
-	public function getOne()
-	{
-		$db = Mysql::defer('mysql');
-		$param = $this->request()->getRequestParam();
-		$model = new UsersModel($db);
-		$bean = $model->getOne(new UsersBean(['u_id' => $param['u_id']]));
-		if ($bean) {
-		    $this->writeJson(Status::CODE_OK, $bean, "success");
-		} else {
-		    $this->writeJson(Status::CODE_BAD_REQUEST, [], 'fail');
-		}
-	}
+    /**
+     * @api {get|post} /Api/Users/update
+     * @apiName update
+     * @apiGroup /Api/Users
+     * @apiPermission
+     * @apiDescription update修改数据
+     * @Param(name="u_id", alias="", optional="", lengthMax="11")
+     * @Param(name="u_password", alias="用户密码", optional="", lengthMax="32")
+     * @Param(name="u_name", alias="用户名", optional="", lengthMax="32")
+     * @Param(name="u_account", alias="用户登录名", optional="", lengthMax="32")
+     * @Param(name="p_u_id", alias="上级u_id", optional="", lengthMax="10")
+     * @Param(name="role_id", alias="", optional="", lengthMax="255")
+     * @Param(name="u_status", alias="用户状态 -1删除 0禁用 1正常", optional="", lengthMax="1")
+     * @Param(name="u_level_line", alias="用户层级链", optional="", lengthMax="100")
+     * @Param(name="last_login_ip", alias="最后登录IP", optional="", lengthMax="20")
+     * @Param(name="last_login_time", alias="最后登录时间", optional="", lengthMax="11")
+     * @Param(name="create_time", alias="创建时间", optional="", lengthMax="11")
+     * @Param(name="update_time", alias="更新时间", optional="", lengthMax="11")
+     * @Param(name="u_auth", alias="", optional="", lengthMax="255")
+     * @apiParam {int} u_id 主键id
+     * @apiParam {int} [u_id]
+     * @apiParam {mixed} [u_password] 用户密码
+     * @apiParam {mixed} [u_name] 用户名
+     * @apiParam {mixed} [u_account] 用户登录名
+     * @apiParam {mixed} [p_u_id] 上级u_id
+     * @apiParam {mixed} [role_id]
+     * @apiParam {int} [u_status] 用户状态 -1删除 0禁用 1正常
+     * @apiParam {mixed} [u_level_line] 用户层级链
+     * @apiParam {mixed} [last_login_ip] 最后登录IP
+     * @apiParam {int} [last_login_time] 最后登录时间
+     * @apiParam {int} [create_time] 创建时间
+     * @apiParam {int} [update_time] 更新时间
+     * @apiParam {mixed} [u_auth]
+     * @apiSuccess {Number} code
+     * @apiSuccess {Object[]} data
+     * @apiSuccess {String} msg
+     * @apiSuccessExample {json} Success-Response:
+     * HTTP/1.1 200 OK
+     * {"code":200,"data":{},"msg":"success"}
+     * @author: AutomaticGeneration < 1067197739@qq.com >
+     * @throws
+     */
+    public function update()
+    {
+        $param = $this->request()->getRequestParam();
+        $model = new SiamUserModel();
+        $info  = $model->get(['u_id' => $param['u_id']]);
+        if (empty($info)) {
+            $this->writeJson(Status::CODE_BAD_REQUEST, [], '该数据不存在');
+            return FALSE;
+        }
+        $updateData = [];
+
+        $updateData['u_id']            = $param['u_id'] ?? $info->u_id;
+        $updateData['u_password']      = $param['u_password'] ?? $info->u_password;
+        $updateData['u_name']          = $param['u_name'] ?? $info->u_name;
+        $updateData['u_account']       = $param['u_account'] ?? $info->u_account;
+        $updateData['p_u_id']          = $param['p_u_id'] ?? $info->p_u_id;
+        $updateData['role_id']         = $param['role_id'] ?? $info->role_id;
+        $updateData['u_status']        = $param['u_status'] ?? $info->u_status;
+        $updateData['u_level_line']    = $param['u_level_line'] ?? $info->u_level_line;
+        $updateData['last_login_ip']   = $param['last_login_ip'] ?? $info->last_login_ip;
+        $updateData['last_login_time'] = $param['last_login_time'] ?? $info->last_login_time;
+        $updateData['create_time']     = $param['create_time'] ?? $info->create_time;
+        $updateData['update_time']     = $param['update_time'] ?? $info->update_time;
+        $updateData['u_auth']          = $param['u_auth'] ?? $info->u_auth;
+
+        $rs = $info->update($updateData);
+        if ($rs) {
+            $this->writeJson(Status::CODE_OK, $rs, "success");
+        } else {
+            $this->writeJson(Status::CODE_BAD_REQUEST, [], $model->lastQueryResult()->getLastError());
+        }
+    }
 
 
-	/**
-	 * @api {get|post} /Api/Users/getAll
-	 * @apiName getAll
-	 * @apiGroup /Api/Users
-	 * @apiPermission
-	 * @apiDescription 获取一个列表
-	 * @apiParam {String} [page=1]
-	 * @apiParam {String} [limit=20]
-	 * @apiParam {String} [keyword] 关键字,根据表的不同而不同
-	 * @apiSuccess {Number} code
-	 * @apiSuccess {Object[]} data
-	 * @apiSuccess {String} msg
-	 * @apiSuccessExample {json} Success-Response:
-	 * HTTP/1.1 200 OK
-	 * {"code":200,"data":{},"msg":"success"}
-	 * @author: AutomaticGeneration < 1067197739@qq.com >
-	 */
-	public function getAll()
-	{
-		$db = Mysql::defer('mysql');
-		$param = $this->request()->getRequestParam();
-		$page = ((int)$param['page'])??1;
-		$limit = ((int)$param['limit'])??20;
-		$model = new UsersModel($db);
-		$data = $model->getAll($page, $param['keyword']??null, $limit);
-		$this->writeJson(Status::CODE_OK, $data, 'success');
-	}
+    /**
+     * @api {get|post} /Api/Users/getOne
+     * @apiName getOne
+     * @apiGroup /Api/Users
+     * @apiPermission
+     * @apiDescription 根据主键获取一条信息
+     * @Param(name="u_id", alias="", optional="", lengthMax="11")
+     * @apiParam {int} u_id 主键id
+     * @apiSuccess {Number} code
+     * @apiSuccess {Object[]} data
+     * @apiSuccess {String} msg
+     * @apiSuccessExample {json} Success-Response:
+     * HTTP/1.1 200 OK
+     * {"code":200,"data":{},"msg":"success"}
+     * @author: AutomaticGeneration < 1067197739@qq.com >
+     * @throws
+     */
+    public function getOne()
+    {
+        $param = $this->request()->getRequestParam();
+        $model = new SiamUserModel();
+        $bean  = $model->get(['u_id' => $param['u_id']]);
+        if ($bean) {
+            $this->writeJson(Status::CODE_OK, $bean, "success");
+        } else {
+            $this->writeJson(Status::CODE_BAD_REQUEST, [], 'fail');
+        }
+    }
 
 
-	/**
-	 * @api {get|post} /Api/Users/delete
-	 * @apiName delete
-	 * @apiGroup /Api/Users
-	 * @apiPermission
-	 * @apiDescription 根据主键删除一条信息
-	 * @apiParam {int} u_id 主键id
-	 * @apiSuccess {Number} code
-	 * @apiSuccess {Object[]} data
-	 * @apiSuccess {String} msg
-	 * @apiSuccessExample {json} Success-Response:
-	 * HTTP/1.1 200 OK
-	 * {"code":200,"data":{},"msg":"success"}
-	 * @author: AutomaticGeneration < 1067197739@qq.com >
-	 */
-	public function delete()
-	{
-		$db = Mysql::defer('mysql');
-		$param = $this->request()->getRequestParam();
-		$model = new UsersModel($db);
+    /**
+     * @api {get|post} /Api/Users/getAll
+     * @apiName getAll
+     * @apiGroup /Api/Users
+     * @apiPermission
+     * @apiDescription 获取一个列表
+     * @apiParam {String} [page=1]
+     * @apiParam {String} [limit=20]
+     * @apiParam {String} [keyword] 关键字,根据表的不同而不同
+     * @apiSuccess {Number} code
+     * @apiSuccess {Object[]} data
+     * @apiSuccess {String} msg
+     * @apiSuccessExample {json} Success-Response:
+     * HTTP/1.1 200 OK
+     * {"code":200,"data":{},"msg":"success"}
+     * @author: AutomaticGeneration < 1067197739@qq.com >
+     * @throws
+     */
+    public function getAll()
+    {
+        $param = $this->request()->getRequestParam();
+        $page  = (int) ($param['page'] ?? 1);
+        $limit = (int) ($param['limit'] ?? 20);
+        $model = new SiamUserModel();
+        $data  = $model->getAll($page, $param['keyword'] ?? NULL, $limit);
+        $this->writeJson(Status::CODE_OK, $data, 'success');
+    }
 
-		$rs = $model->delete(new UsersBean(['u_id' => $param['u_id']]));
-		if ($rs) {
-		    $this->writeJson(Status::CODE_OK, [], "success");
-		} else {
-		    $this->writeJson(Status::CODE_BAD_REQUEST, [], 'fail');
-		}
-	}
+
+    /**
+     * @api {get|post} /Api/Users/delete
+     * @apiName delete
+     * @apiGroup /Api/Users
+     * @apiPermission
+     * @apiDescription 根据主键删除一条信息
+     * @Param(name="u_id", alias="", optional="", lengthMax="11")
+     * @apiParam {int} u_id 主键id
+     * @apiSuccess {Number} code
+     * @apiSuccess {Object[]} data
+     * @apiSuccess {String} msg
+     * @apiSuccessExample {json} Success-Response:
+     * HTTP/1.1 200 OK
+     * {"code":200,"data":{},"msg":"success"}
+     * @author: AutomaticGeneration < 1067197739@qq.com >
+     * @throws
+     */
+    public function delete()
+    {
+        $param = $this->request()->getRequestParam();
+        $model = new SiamUserModel();
+
+        $rs = $model->destroy(['u_id' => $param['u_id']]);
+        if ($rs) {
+            $this->writeJson(Status::CODE_OK, [], "success");
+        } else {
+            $this->writeJson(Status::CODE_BAD_REQUEST, [], 'fail');
+        }
+    }
 
     protected function getValidateRule(?string $action): ?Validate
     {
         // TODO: Implement getValidateRule() method.
-        switch ($action){
+        switch ($action) {
             case 'login':
                 $valitor = new Validate();
                 $valitor->addColumn('u_account')->required();
@@ -244,43 +276,58 @@ class Users extends Base
                 return $valitor;
                 break;
         }
-        return null;
+        return NULL;
     }
 
+    /**
+     * @return bool
+     * @throws \EasySwoole\Mysqli\Exception\Exception
+     * @throws \EasySwoole\ORM\Exception\Exception
+     * @throws \Throwable
+     */
     public function login()
     {
-        $db = Mysql::defer('mysql');
-        $userModel = new UsersModel($db);
-        $userBean  = new UsersBean([
-            'u_account' => $this->request()->getRequestParam('u_account')
+        $user = SiamUserModel::create()->get([
+            'u_account' => $this->request()->getRequestParam('u_account'),
         ]);
 
-        $user = $userModel->getOneByAccount($userBean);
-
-        if ($user === null){
+        if ($user === NULL) {
             $this->writeJson(Status::CODE_NOT_FOUND, new \stdClass(), '用户不存在');
-            return false;
+            return FALSE;
         }
 
 
         // 生成token
-        $config = Config::getInstance();
+        $config    = Config::getInstance();
         $jwtConfig = $config->getConf('JWT');
-        $token = JWT::getInstance()->setSub($jwtConfig['sub'])
-            ->setIss($jwtConfig['iss'])
-            ->setExp($jwtConfig['exp'])
-            ->setSecretKey($jwtConfig['key'])
-            ->setNbf(($jwtConfig['nbf'] !== null) ? time() + $jwtConfig['nbf'] : time())
-            ->setWith([
-                'u_id' => $user->getUId(),
-                'u_name' => $user->getUName(),
-            ])
-            ->make();
+
+        $jwtObject = Jwt::getInstance()
+            ->setSecretKey($jwtConfig['key']) // 秘钥
+            ->publish();
+
+        $jwtObject->setAlg('HMACSHA256'); // 加密方式
+        $jwtObject->setAud("easy_swoole_admin"); // 用户
+        $jwtObject->setExp(time()+$jwtConfig['exp']); // 过期时间
+        $jwtObject->setIat(time()); // 发布时间
+        $jwtObject->setIss($jwtConfig['iss']); // 发行人
+        $jwtObject->setJti(md5(time())); // jwt id 用于标识该jwt
+        echo time();
+        $jwtObject->setNbf(time()); // 在此之前不可用
+        $jwtObject->setSub($jwtConfig['sub']); // 主题
+
+        // 自定义数据
+        $jwtObject->setData([
+            'u_id'   => $user->u_id,
+            'u_name' => $user->u_name
+        ]);
+
+        // 最终生成的token
+        $token = $jwtObject->__toString();
 
         $this->writeJson(Status::CODE_OK, [
             'token'    => $token,
             'userInfo' => $user->toArray(),
-            'authList' => $userModel->getAuth($user->getUId()),
+            'authList' => $user->getAuth(),
         ], '登陆成功');
     }
 }

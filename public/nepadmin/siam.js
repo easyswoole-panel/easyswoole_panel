@@ -16,25 +16,24 @@ layui.define(['conf'], function(exports){
             if (token===undefined){
                 return null;
             }
-            var tokenArr = token.split(".");
-            var tokenData = tokenArr[1];
-            tokenData = tokenData.replace(/_b_/g,"=");
-            tokenData = tokenData.replace(/_a_/g,"+");
-            tokenData = tokenData.replace(/_/g,"/");
-            var json =window.atob(tokenData);
+            var json =window.atob(decodeURIComponent (token));
             var obj = JSON.parse(json);
             var timestamp = Date.parse(new Date())/1000;
             console.log(obj);
+            console.log(obj.nbf);
+            console.log(timestamp);
             // 在此之前不可用 nbf-10 兼容客户端时间戳慢了几秒
             if (obj.nbf !== undefined && (obj.nbf - 10) > timestamp){
-                return 'NOTBEFORE';
+                throw new Error("not before");
             }
             // 是否已经过期
             if (obj.exp !== undefined && obj.exp < timestamp){
-                return 'EXP';
+                throw new Error("token exp");
             }
-
-            return obj[str];
+            if ( obj[str] !== undefined){
+                return obj[str];
+            }
+            return obj.data[str];
         },
         getToken: function() {
             let token = layui.data(conf.tableName)[conf.tokenName];

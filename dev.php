@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: yf
+ * Users: yf
  * Date: 2019-01-01
  * Time: 20:06
  */
@@ -48,10 +48,10 @@ return [
     // ],
     'MYSQL' => [
         //数据库配置
-        'host'                 => '192.168.23.1',//数据库连接ip
+        'host'                 => '127.0.0.1',//数据库连接ip
         'user'                 => 'root',//数据库用户名
         'password'             => 'root',//数据库密码
-        'database'             => 'siam_admin',//数据库
+        'database'             => 'admin',//数据库
         'port'                 => '3306',//端口
         'timeout'              => '30',//超时时间
         'connect_timeout'      => '5',//连接超时时间
