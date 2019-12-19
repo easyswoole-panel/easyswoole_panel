@@ -1,5 +1,9 @@
 # easyswoole_admin部署教程
 
+在github上切换tag 到1.0版本  下载zip  或者git clone checkout指定tag
+
+正在改版更新2.0  使用ORM组件。请勿直接拉取master
+
 ① 上传源码  composer install 
 
 ② 开设网站  指向目录 public目录 纯静态 不加载php
