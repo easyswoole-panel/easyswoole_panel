@@ -4,13 +4,15 @@ namespace App\HttpController\Api;
 
 use App\Model\Auths\AuthsBean;
 use App\Model\Auths\AuthsModel;
+use App\Model\Auths\SiamAuthModel;
+use App\Model\Users\SiamUserModel;
 use App\Model\Users\UsersModel;
+use EasySwoole\EasySwoole\Config;
 use EasySwoole\FastCache\Cache;
-use EasySwoole\MysqliPool\Mysql;
+use EasySwoole\Jwt\Jwt;
 use EasySwoole\Policy\Policy;
 use EasySwoole\Policy\PolicyNode;
 use EasySwoole\Validate\Validate;
-use Siam\JWT;
 
 /**
  * BaseController
@@ -45,7 +47,30 @@ abstract class Base extends \EasySwoole\Http\AbstractInterface\Controller
                 $this->writeJson(\EasySwoole\Http\Message\Status::CODE_BAD_REQUEST, new \stdClass(), "token不可为空");
                 return false;
             }
-            $this->token = JWT::getInstance()->setSecretKey(\EasySwoole\EasySwoole\Config::getInstance()->getConf('JWT.key'))->decode($this->request()->getHeader('token')[0]);
+
+
+            $config    = Config::getInstance();
+            $jwtConfig = $config->getConf('JWT');
+
+            $jwtObject = Jwt::getInstance()->setSecretKey($jwtConfig['key'])->decode($this->request()->getHeader('token')[0]);
+            $status = $jwtObject->getStatus();
+            // 如果encode设置了秘钥,decode 的时候要指定
+
+            switch ($status)
+            {
+                case  1:
+                    $this->token = $jwtObject->getData();
+                    break;
+                case  -1:
+                    $this->writeJson(\EasySwoole\Http\Message\Status::CODE_BAD_REQUEST, new \stdClass(), "token无效");
+                    return false;
+                    break;
+                case  -2:
+                    $this->writeJson(\EasySwoole\Http\Message\Status::CODE_BAD_REQUEST, new \stdClass(), "token过期");
+                    return false;
+                    break;
+            }
+
             if (!is_array($this->token) || empty($this->token)){
                 $this->writeJson(\EasySwoole\Http\Message\Status::CODE_BAD_REQUEST, new \stdClass(), "token解析失败:".$this->token);
                 return false;
@@ -89,6 +114,7 @@ abstract class Base extends \EasySwoole\Http\AbstractInterface\Controller
      * @param $u_id
      * @param string $path
      * @return bool
+     * @throws
      */
     private function vifPolicy($u_id, string $path)
     {
@@ -104,8 +130,8 @@ abstract class Base extends \EasySwoole\Http\AbstractInterface\Controller
         if($policy === null){
             $policy = new Policy();
             // 用户权限
-            $userModel = new UsersModel(Mysql::defer('mysql'));
-            $userAuth  = $userModel->getAuth($u_id);
+            $userModel = SiamUserModel::create()->get($u_id);
+            $userAuth  = $userModel->getAuth();
             foreach ($userAuth as $key => $value) {
                 $policy->addPath($value['auth_rules'],PolicyNode::EFFECT_ALLOW);
             }
@@ -124,14 +150,14 @@ abstract class Base extends \EasySwoole\Http\AbstractInterface\Controller
      * 该路径是否建立了权限管理  没建立就是不用管
      * @param string $path
      * @return bool
+     * @throws
      */
     private function shouldVifPath(string $path): bool
     {
         $cache = Cache::getInstance();
         $authRes = $cache->get('shouldvif_api_'.md5($path));
         if ($authRes === null){
-            $authModel = new AuthsModel(Mysql::defer('mysql'));
-            $auth = $authModel->getOneByRules(new AuthsBean(['auth_rules' => $path]));
+            $auth = SiamAuthModel::create()->get(['auth_rules' => $path]);
             // 没有设置该api规则 所以不需要验证
             if ($auth===null){
                 $cache->set('shouldvif_api_'.md5($path),  false, 3*60);

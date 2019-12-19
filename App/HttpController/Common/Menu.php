@@ -3,8 +3,11 @@
 namespace App\HttpController\Common;
 
 
+use App\HttpController\Api\SiamSystem;
+use App\Model\System\SiamSystemModel;
 use App\Model\System\SystemBean;
 use App\Model\System\SystemModel;
+use App\Model\Users\SiamUserModel;
 use App\Model\Users\UsersModel;
 use EasySwoole\MysqliPool\Mysql;
 
@@ -17,13 +20,17 @@ class Menu
         $this->onlyMenu = $only;
     }
 
+    /**
+     * @param int $uid
+     * @return array
+     * @throws \EasySwoole\Mysqli\Exception\Exception
+     * @throws \EasySwoole\ORM\Exception\Exception
+     * @throws \Throwable
+     */
     public function get(int $uid)
     {
-        $db = Mysql::defer('mysql');
-
         // 先 u_id 查询 分析权限  角色权限+个人权限
-        $Users = new UsersModel($db);
-        $lists = $Users->getAuth($uid);
+        $lists = SiamUserModel::create()->get(['u_id' => $uid])->getAuth();
 
         $newList = [];
 
@@ -33,8 +40,7 @@ class Menu
 
         $this->auth_list = $newList;
 
-        $systemModel = new SystemModel($db);
-        $systemInfo = $systemModel->getOne(new SystemBean(['id' => 1]));
+        $systemInfo = SiamSystemModel::create()->get(1);
 
         if ($systemInfo == null){
             return [];

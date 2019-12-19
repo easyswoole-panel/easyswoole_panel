@@ -230,7 +230,10 @@ class Users extends Base
         $page  = (int) ($param['page'] ?? 1);
         $limit = (int) ($param['limit'] ?? 20);
         $model = new SiamUserModel();
-        $data  = $model->getAll($page, $param['keyword'] ?? NULL, $limit);
+        if (isset($param['keyword'])){
+            $model->where('u_name', "%{$param['keyword']}%", 'like');
+        }
+        $data  = $model->getAll($page, $limit);
         $this->writeJson(Status::CODE_OK, $data, 'success');
     }
 
@@ -311,7 +314,6 @@ class Users extends Base
         $jwtObject->setIat(time()); // 发布时间
         $jwtObject->setIss($jwtConfig['iss']); // 发行人
         $jwtObject->setJti(md5(time())); // jwt id 用于标识该jwt
-        echo time();
         $jwtObject->setNbf(time()); // 在此之前不可用
         $jwtObject->setSub($jwtConfig['sub']); // 主题
 
