@@ -91,7 +91,7 @@ class Users extends Base
             $this->writeJson(Status::CODE_OK, $model->toArray(), "success");
             // 更新层级链
             $model->u_level_line = $model->u_level_line."-".$model->u_id;
-            $updateRes           = $model->save();
+            $updateRes           = $model->update();
             if (!$updateRes) $this->writeJson(Status::CODE_BAD_REQUEST, [], $model->lastQueryResult()->getLastError());
             $this->writeJson(Status::CODE_OK, $model->toArray(), "success");
         } else {
