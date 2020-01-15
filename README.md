@@ -2,7 +2,9 @@
 
 在github上切换tag 到1.0版本  下载zip  或者git clone checkout指定tag
 
-正在改版更新2.0  使用ORM组件。请勿直接拉取master
+v1版本使用mysqli组件+pool
+
+v2版本使用orm组件
 
 ① 上传源码  composer install 
 
