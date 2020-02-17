@@ -35,13 +35,26 @@ CREATE TABLE `siam_auths`  (
 -- ----------------------------
 -- Records of siam_auths
 -- ----------------------------
-INSERT INTO `siam_auths` VALUES (1, '后台管理', '/admin/*/*', 'layui-icon-rate-half', 1, 0, 0);
-INSERT INTO `siam_auths` VALUES (2, '权限管理', '/auths/list', '', 1, 0, 0);
-INSERT INTO `siam_auths` VALUES (3, '角色管理', '/roles/list', '', 1, 0, 0);
-INSERT INTO `siam_auths` VALUES (4, '用户管理', '/user/list', '', 1, 0, 0);
-INSERT INTO `siam_auths` VALUES (5, '查看权限缓存', '/api/system/showCache', '', 3, 1562548805, 1562548805);
-INSERT INTO `siam_auths` VALUES (6, '清空权限缓存', '/api/system/clearCache', '', 3, 1562548820, 1562548820);
-INSERT INTO `siam_auths` VALUES (7, '添加角色', '/api/roles/add', '', 3, 1562551947, 1562551947);
+INSERT INTO `siam_auths` (`auth_id`, `auth_name`, `auth_rules`, `auth_icon`, `auth_type`, `create_time`, `update_time`) VALUES
+(1, '后台管理', '/admin/*/*', 'layui-icon-rate-half', 1, 0, 0),
+(2, '权限管理', '/auths/list', '', 1, 0, 0),
+(3, '角色管理', '/roles/list', '', 1, 0, 0),
+(4, '用户管理', '/user/list', '', 1, 0, 0),
+(5, '查看权限缓存', '/api/system/showCache', '', 3, 1562548805, 1562548805),
+(6, '清空权限缓存', '/api/system/clearCache', '', 3, 1562548820, 1562548820),
+(7, '添加角色', '/api/roles/add', '', 3, 1562551947, 1562551947),
+(8, '卡片列表', '/list/card', '', 1, 0, 0),
+(9, '新增模块', '/module/admin', 'layui-icon-experiment', 1, 0, 0),
+(10, 'admin', '/module/admin', '', 1, 0, 0),
+(11, 'helper', '/module/helper', '', 1, 0, 0),
+(12, 'loadbar', '/module/loadbar', '', 1, 0, 0),
+(13, '详情页', '/detail', 'layui-icon-container', 1, 0, 0),
+(14, '数据统计', '/chart/index', '', 1, 0, 0),
+(16, '工作计划', '/detail/plan', '', 1, 0, 0),
+(17, '异常页', 'exception', 'layui-icon-error', 1, 0, 0),
+(18, '403', '/exception/403', '', 1, 0, 0),
+(19, '404', '/exception/404', '', 1, 0, 0),
+(20, '500', '/exception/500', '', 1, 0, 0);
 
 -- ----------------------------
 -- Table structure for siam_migrations
@@ -101,7 +114,8 @@ CREATE TABLE `siam_system`  (
 -- ----------------------------
 -- Records of siam_system
 -- ----------------------------
-INSERT INTO `siam_system` VALUES (1, 10021, '[{\"id\":1,\"child\":[{\"id\":2,\"child\":[{\"id\":5},{\"id\":6}]},{\"id\":3,\"child\":[{\"id\":7}]},{\"id\":4}]}]');
+INSERT INTO `siam_system` (`id`, `user_next_id`, `auth_order`) VALUES
+(1, 10021, '[{\"id\":1,\"child\":[{\"id\":2,\"child\":[{\"id\":5},{\"id\":6}]},{\"id\":3,\"child\":[{\"id\":7}]},{\"id\":4}]},{\"id\":9,\"child\":[{\"id\":10},{\"id\":11},{\"id\":12}]},{\"id\":13,\"child\":[{\"id\":14},{\"id\":16}]},{\"id\":17,\"child\":[{\"id\":18},{\"id\":19},{\"id\":20}]},{\"id\":8}]');
 
 -- ----------------------------
 -- Table structure for siam_users
