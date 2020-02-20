@@ -1,5 +1,11 @@
 # easyswoole_admin部署教程
 
+在github上切换tag 到1.0版本  下载zip  或者git clone checkout指定tag
+
+v1版本使用mysqli组件+pool
+
+v2版本使用orm组件
+
 ① 上传源码  composer install 
 
 ② 开设网站  指向目录 public目录 纯静态 不加载php
@@ -10,7 +16,7 @@
 
 ⑤ public/nepadmin/config.js搜索 requestUrl  请求url换成你自己的es服务地址  IP:Port
 
-⑥ EasySwooleEvent.php  106行 设置跨域  填写加入 第二步开设的域名（如果为`*` 则允许所有跨域 不需更改）
+⑥ EasySwooleEvent.php  106行左右（不固定 会更新） 设置跨域  填写加入 第二步开设的域名（如果为`*` 则允许所有跨域 不需更改）
 
 ⑦ 管理员账号 1001 123456   测试账号 100083 123456   可以看到测试账号的菜单只有权限管理，点击查看缓存、清除缓存会提示没有权限  （页面权限和接口权限是两回事）
 

@@ -2,25 +2,31 @@
 
 namespace App\HttpController\Api;
 
-use App\Model\Auths\AuthsModel;
-use EasySwoole\MysqliPool\Mysql;
-use App\Model\Roles\RolesBean;
-use App\Model\Roles\RolesModel;
+use App\Model\Roles\SiamRoleModel;
+use EasySwoole\Http\Annotation\Param;
 use EasySwoole\Http\Message\Status;
 use EasySwoole\Validate\Validate;
 
 /**
- * Class Roles
+ * Class SiamRole
  * Create With Automatic Generator
  */
 class Roles extends Base
 {
 	/**
-	 * @api {get|post} /Api/Roles/add
+	 * @api {get|post} /Api/SiamRole/add
 	 * @apiName add
-	 * @apiGroup /Api/Roles
+	 * @apiGroup /Api/SiamRole
 	 * @apiPermission
 	 * @apiDescription add新增数据
+	 * @Param(name="role_id", alias="用户id", required="", lengthMax="11")
+	 * @Param(name="role_name", alias="角色名", required="", lengthMax="40")
+	 * @Param(name="role_auth", alias="角色权限", required="", lengthMax="255")
+	 * @Param(name="role_status", alias="角色状态 0正常1禁用", required="", lengthMax="1")
+	 * @Param(name="level", alias="角色级别 越小权限越高", required="", lengthMax="1")
+	 * @Param(name="create_time", alias="创建时间", required="", lengthMax="11")
+	 * @Param(name="update_time", alias="更新时间", required="", lengthMax="11")
+	 * @apiParam {int} role_id 用户id
 	 * @apiParam {string} role_name 角色名
 	 * @apiParam {string} role_auth 角色权限
 	 * @apiParam {int} role_status 角色状态 0正常1禁用
@@ -34,38 +40,46 @@ class Roles extends Base
 	 * HTTP/1.1 200 OK
 	 * {"code":200,"data":{},"msg":"success"}
 	 * @author: AutomaticGeneration < 1067197739@qq.com >
+     * @throws
 	 */
 	public function add()
-	{
-		$db = Mysql::defer('mysql');
-		$param = $this->request()->getRequestParam();
-		$model = new RolesModel($db);
-		$bean = new RolesBean();
-		$bean->setRoleName($param['role_name']);
-		$bean->setRoleAuth($param['role_auth']);
-		$bean->setRoleStatus(0); // 0正常1禁用
-		$bean->setLevel(0);
-		$bean->setCreateTime(time());
-		$bean->setUpdateTime(time());
-		$rs = $model->add($bean);
+    {
+        $param = $this->request()->getRequestParam();
+        $data  = [
+            'role_name'   => $param['role_name'],
+            'role_auth'   => $param['role_auth'] ?? '0',
+            'role_status' => $param['role_status'] ?? '0',
+            'level'       => $param['level'] ?? '0',
+            'create_time' => $param['create_time'] ?? '0',
+            'update_time' => $param['update_time'] ?? '0',
+        ];
+        $model = new SiamRoleModel($data);
+		$rs = $model->save();
 		if ($rs) {
-		    $bean->setRoleId($db->getInsertId());
-		    $this->writeJson(Status::CODE_OK, $bean->toArray(), "success");
+		    $this->writeJson(Status::CODE_OK, $model->toArray(), "success");
 		} else {
-		    $this->writeJson(Status::CODE_BAD_REQUEST, [], $db->getLastError());
+		    $this->writeJson(Status::CODE_BAD_REQUEST, [], $model->lastQueryResult()->getLastError());
 		}
 	}
 
 
 	/**
-	 * @api {get|post} /Api/Roles/update
+	 * @api {get|post} /Api/SiamRole/update
 	 * @apiName update
-	 * @apiGroup /Api/Roles
+	 * @apiGroup /Api/SiamRole
 	 * @apiPermission
 	 * @apiDescription update修改数据
+	 * @Param(name="role_id", alias="用户id", optional="", lengthMax="11")
+	 * @Param(name="role_name", alias="角色名", optional="", lengthMax="40")
+	 * @Param(name="role_auth", alias="角色权限", optional="", lengthMax="255")
+	 * @Param(name="role_status", alias="角色状态 0正常1禁用", optional="", lengthMax="1")
+	 * @Param(name="level", alias="角色级别 越小权限越高", optional="", lengthMax="1")
+	 * @Param(name="create_time", alias="创建时间", optional="", lengthMax="11")
+	 * @Param(name="update_time", alias="更新时间", optional="", lengthMax="11")
 	 * @apiParam {int} role_id 主键id
-	 * @apiParam {string} [role_name] 角色名
-	 * @apiParam {string} [role_auth] 角色权限
+	 * @apiParam {int} [role_id] 用户id
+	 * @apiParam {mixed} [role_name] 角色名
+	 * @apiParam {mixed} [role_auth] 角色权限
 	 * @apiParam {int} [role_status] 角色状态 0正常1禁用
 	 * @apiParam {int} [level] 角色级别 越小权限越高
 	 * @apiParam {int} [create_time] 创建时间
@@ -77,40 +91,42 @@ class Roles extends Base
 	 * HTTP/1.1 200 OK
 	 * {"code":200,"data":{},"msg":"success"}
 	 * @author: AutomaticGeneration < 1067197739@qq.com >
+     * @throws
 	 */
 	public function update()
 	{
-		$db = Mysql::defer('mysql');
 		$param = $this->request()->getRequestParam();
-		$model = new RolesModel($db);
-		$bean = $model->getOne(new RolesBean(['role_id' => $param['role_id']]));
-		if (empty($bean)) {
+		$model = new SiamRoleModel();
+		$info = $model->get(['role_id' => $param['role_id']]);
+		if (empty($info)) {
 		    $this->writeJson(Status::CODE_BAD_REQUEST, [], '该数据不存在');
 		    return false;
 		}
-		$updateBean = new RolesBean();
+		$updateData = [];
 
-		$updateBean->setRoleName($param['role_name']??$bean->getRoleName());
-		$updateBean->setRoleAuth($param['role_auth']??$bean->getRoleAuth());
-		$updateBean->setRoleStatus($param['role_status']??$bean->getRoleStatus());
-		$updateBean->setLevel($param['level']??$bean->getLevel());
-		$updateBean->setCreateTime($param['create_time']??$bean->getCreateTime());
-		$updateBean->setUpdateTime($param['update_time']??$bean->getUpdateTime());
-		$rs = $model->update($bean, $updateBean->toArray([], $updateBean::FILTER_NOT_EMPTY));
+		$updateData['role_id'] = $param['role_id']??$info->role_id;
+		$updateData['role_name'] = $param['role_name']??$info->role_name;
+		$updateData['role_auth'] = $param['role_auth']??$info->role_auth;
+		$updateData['role_status'] = $param['role_status']??$info->role_status;
+		$updateData['level'] = $param['level']??$info->level;
+		$updateData['create_time'] = $param['create_time']??$info->create_time;
+		$updateData['update_time'] = $param['update_time']??$info->update_time;
+		$rs = $info->update($updateData);
 		if ($rs) {
 		    $this->writeJson(Status::CODE_OK, $rs, "success");
 		} else {
-		    $this->writeJson(Status::CODE_BAD_REQUEST, [], $db->getLastError());
+		    $this->writeJson(Status::CODE_BAD_REQUEST, [], $model->lastQueryResult()->getLastError());
 		}
 	}
 
 
 	/**
-	 * @api {get|post} /Api/Roles/getOne
+	 * @api {get|post} /Api/SiamRole/getOne
 	 * @apiName getOne
-	 * @apiGroup /Api/Roles
+	 * @apiGroup /Api/SiamRole
 	 * @apiPermission
 	 * @apiDescription 根据主键获取一条信息
+	 * @Param(name="role_id", alias="用户id", optional="", lengthMax="11")
 	 * @apiParam {int} role_id 主键id
 	 * @apiSuccess {Number} code
 	 * @apiSuccess {Object[]} data
@@ -119,20 +135,14 @@ class Roles extends Base
 	 * HTTP/1.1 200 OK
 	 * {"code":200,"data":{},"msg":"success"}
 	 * @author: AutomaticGeneration < 1067197739@qq.com >
+     * @throws
 	 */
 	public function getOne()
 	{
-		$db = Mysql::defer('mysql');
 		$param = $this->request()->getRequestParam();
-		$model = new RolesModel($db);
-		$bean = $model->getOne(new RolesBean(['role_id' => $param['role_id']]));
+		$model = new SiamRoleModel();
+		$bean = $model->get(['role_id' => $param['role_id']]);
 		if ($bean) {
-		    // 附带auth列表
-            // $auths = explode(',', $bean->getRoleAuth());
-            // $authModel = new AuthsModel($db);
-            // $authInfo = $authModel->getListById($auths,'auth_id,auth_name');
-            // $bean->setRoleAuth($authInfo);
-
 		    $this->writeJson(Status::CODE_OK, $bean, "success");
 		} else {
 		    $this->writeJson(Status::CODE_BAD_REQUEST, [], 'fail');
@@ -141,9 +151,9 @@ class Roles extends Base
 
 
 	/**
-	 * @api {get|post} /Api/Roles/getAll
+	 * @api {get|post} /Api/SiamRole/getAll
 	 * @apiName getAll
-	 * @apiGroup /Api/Roles
+	 * @apiGroup /Api/SiamRole
 	 * @apiPermission
 	 * @apiDescription 获取一个列表
 	 * @apiParam {String} [page=1]
@@ -156,25 +166,26 @@ class Roles extends Base
 	 * HTTP/1.1 200 OK
 	 * {"code":200,"data":{},"msg":"success"}
 	 * @author: AutomaticGeneration < 1067197739@qq.com >
+     * @throws
 	 */
 	public function getAll()
-	{
-		$db = Mysql::defer('mysql');
-		$param = $this->request()->getRequestParam();
-		$page = (int)($param['page']??1);
-		$limit = (int)($param['limit']??20);
-		$model = new RolesModel($db);
-		$data = $model->getAll($page, $param['keyword']??null, $limit);
+    {
+        $param = $this->request()->getRequestParam();
+        $page  = (int) ($param['page'] ?? 1);
+        $limit = (int) ($param['limit'] ?? 20);
+        $model = new SiamRoleModel();
+		$data = $model->getAll($page, $limit);
 		$this->writeJson(Status::CODE_OK, $data, 'success');
 	}
 
 
 	/**
-	 * @api {get|post} /Api/Roles/delete
+	 * @api {get|post} /Api/SiamRole/delete
 	 * @apiName delete
-	 * @apiGroup /Api/Roles
+	 * @apiGroup /Api/SiamRole
 	 * @apiPermission
 	 * @apiDescription 根据主键删除一条信息
+	 * @Param(name="role_id", alias="用户id", optional="", lengthMax="11")
 	 * @apiParam {int} role_id 主键id
 	 * @apiSuccess {Number} code
 	 * @apiSuccess {Object[]} data
@@ -183,14 +194,14 @@ class Roles extends Base
 	 * HTTP/1.1 200 OK
 	 * {"code":200,"data":{},"msg":"success"}
 	 * @author: AutomaticGeneration < 1067197739@qq.com >
+     * @throws
 	 */
 	public function delete()
 	{
-		$db = Mysql::defer('mysql');
 		$param = $this->request()->getRequestParam();
-		$model = new RolesModel($db);
+		$model = new SiamRoleModel();
 
-		$rs = $model->delete(new RolesBean(['role_id' => $param['role_id']]));
+		$rs = $model->destroy(['role_id' => $param['role_id']]);
 		if ($rs) {
 		    $this->writeJson(Status::CODE_OK, [], "success");
 		} else {
@@ -200,7 +211,10 @@ class Roles extends Base
 
     protected function getValidateRule(?string $action): ?Validate
     {
-        // TODO: Implement getValidateRule() method.
+        switch ($action){
+            case 'save_tree_list':
+                break;
+        }
         return null;
     }
 }
