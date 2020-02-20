@@ -88,7 +88,6 @@ class Users extends Base
         $model = new SiamUserModel($data);
         $rs    = $model->save();
         if ($rs) {
-            $this->writeJson(Status::CODE_OK, $model->toArray(), "success");
             // 更新层级链
             $model->u_level_line = $model->u_level_line."-".$model->u_id;
             $updateRes           = $model->save();
