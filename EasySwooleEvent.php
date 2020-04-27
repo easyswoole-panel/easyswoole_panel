@@ -9,9 +9,6 @@
 namespace EasySwoole\EasySwoole;
 
 
-use App\IpList;
-use Co\Server;
-use EasySwoole\Component\Process\AbstractProcess;
 use EasySwoole\Component\Process\Exception;
 use EasySwoole\EasySwoole\Swoole\EventRegister;
 use EasySwoole\EasySwoole\AbstractInterface\Event;
@@ -24,6 +21,7 @@ use EasySwoole\FastCache\CacheProcessConfig;
 use EasySwoole\FastCache\SyncData;
 use EasySwoole\ORM\Db\Connection;
 use EasySwoole\ORM\DbManager;
+use EasySwoole\Spl\SplArray;
 use EasySwoole\Utility\File;
 
 class EasySwooleEvent implements Event
@@ -39,8 +37,6 @@ class EasySwooleEvent implements Event
 
     public static function mainServerCreate(EventRegister $register)
     {
-        // TODO: Implement mainServerCreate() method.
-
         // // 开启IP限流
         // IpList::getInstance();
         // $class = new class('IpAccessCount') extends AbstractProcess{
@@ -86,6 +82,10 @@ class EasySwooleEvent implements Event
                     $syncData->setQueueArray($data['queue']);
                     return $syncData;
                 }
+                $syncData = new SyncData();
+                $syncData->setArray(new SplArray());
+                $syncData->setQueueArray(new SplArray());
+                return $syncData;
             });
         } catch (RuntimeError $e) {
             echo "[Warn] --> fast-cache注册onStart失败\n";
@@ -135,15 +135,15 @@ class EasySwooleEvent implements Event
         // }
 
         $allow_origin = array(
-            "http://easyswoole.test",
-            "http://192.168.23.128",
+            // "http://www.siammm.cn",
+            // 为了安全，应该配置指定域名才允许跨域
         );
 
         $origin = $request->getHeader('origin');
 
         if ($origin !== []){
             $origin = $origin[0];
-            if(in_array($origin, $allow_origin)){
+            if(empty($allow_origin) || in_array($origin, $allow_origin)){
                 $response->withHeader('Access-Control-Allow-Origin', $origin);
                 $response->withHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
                 $response->withHeader('Access-Control-Allow-Credentials', 'true');
@@ -162,6 +162,5 @@ class EasySwooleEvent implements Event
 
     public static function afterRequest(Request $request, Response $response): void
     {
-        // TODO: Implement afterAction() method.
     }
 }
