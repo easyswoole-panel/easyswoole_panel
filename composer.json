@@ -12,7 +12,8 @@
         "easyswoole/jwt": "1.0.1",
         "easyswoole/policy": "^1.0",
         "easyswoole/fast-cache": "^1.1",
-        "swoole/ide-helper": "^4.5"
+        "swoole/ide-helper": "^4.5",
+        "easyswoole/validate": "^1.2"
     },
     "repositories": {
         "packagist": {
