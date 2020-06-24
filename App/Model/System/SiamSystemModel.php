@@ -2,6 +2,8 @@
 
 namespace App\Model\System;
 
+use EasySwoole\ORM\Exception\Exception;
+
 /**
  * Class SiamSystemModel
  * Create With Automatic Generator
@@ -14,13 +16,15 @@ class SiamSystemModel extends \App\Model\BaseModel
 	protected $tableName = 'siam_system';
 
 
-	/**
-	 * @getAll
-	 * @param  int  $page  1
-	 * @param  int  $pageSize  10
-	 * @param  string  $field  *
-	 * @return array[total,list]
-	 */
+    /**
+     * @getAll
+     * @param int $page 1
+     * @param int $pageSize 10
+     * @param string $field *
+     * @return array[total,list]
+     * @throws \EasySwoole\ORM\Exception\Exception
+     * @throws \Throwable
+     */
 	public function getAll(int $page = 1, int $pageSize = 10, string $field = '*'): array
 	{
 		$list = $this
@@ -38,7 +42,17 @@ class SiamSystemModel extends \App\Model\BaseModel
      */
     public function getNewAccount()
     {
-        return $this->user_next_id;
+        $return = $this->user_next_id;
+        try {
+            $this->setAttr("user_next_id", $return + 1);
+            try {
+                $this->update();
+            } catch (Exception $e) {
+            } catch (\Throwable $e) {
+            }
+        } catch (Exception $e) {
+        }
+        return $return;
     }
 }
 

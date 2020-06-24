@@ -44,7 +44,7 @@ abstract class Base extends \EasySwoole\Http\AbstractInterface\Controller
         if (!in_array($path, $this->basicAction)){
             // 必须有token
             if (empty( $this->request()->getHeader('token')[0] )){
-                $this->writeJson(\EasySwoole\Http\Message\Status::CODE_BAD_REQUEST, new \stdClass(), "token不可为空");
+                $this->writeJson(\EasySwoole\Http\Message\Status::CODE_UNAUTHORIZED, new \stdClass(), "token不可为空");
                 return false;
             }
 
@@ -66,7 +66,7 @@ abstract class Base extends \EasySwoole\Http\AbstractInterface\Controller
                     return false;
                     break;
                 case  -2:
-                    $this->writeJson(\EasySwoole\Http\Message\Status::CODE_BAD_REQUEST, new \stdClass(), "token过期");
+                    $this->writeJson(\EasySwoole\Http\Message\Status::CODE_UNAUTHORIZED, new \stdClass(), "token过期");
                     return false;
                     break;
             }

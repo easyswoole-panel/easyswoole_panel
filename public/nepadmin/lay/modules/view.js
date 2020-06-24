@@ -482,7 +482,9 @@ layui
             var status = res[conf.response.statusName]
             if (status != conf.response.statusCode.ok) {
               if (status == conf.response.statusCode.logout) {
-                layui.admin.logout()
+                layer.alert("登录已经失效，请重新登录",function(){
+                  layui.admin.logout()
+                })
               } else {
                 // self.log(
                 //   '返回状态码异常：' +

@@ -12,7 +12,7 @@
         "easyswoole/jwt": "1.0.1",
         "easyswoole/policy": "^1.0",
         "easyswoole/fast-cache": "^1.1",
-        "tioncico/curd-automatic-generation": "2.x-dev"
+        "swoole/ide-helper": "^4.5"
     },
     "repositories": {
         "packagist": {

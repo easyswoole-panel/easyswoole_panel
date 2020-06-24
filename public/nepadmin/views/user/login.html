@@ -224,8 +224,23 @@ layui.use(['admin','helper','util','qrcode','form','siam'],function(admin,helper
     var QRExists = false;
     var btnDisabledCls = 'layui-btn-disabled';
     var smsCountdown = false;
+    var conf = layui.conf;
 
     form.render();
+
+    // 是否配置了url
+    if (conf.requestUrl === ""){
+        layer.alert(`没有配置后台api路径，配置教程如下：<br/>
+1.在public/nepadmin/config.js中搜索[requestUrl]，并且填入后台api的路径 如:http://192.168.23.128:9501/api/<br/>
+2.在EasySwooleEvent.php中，配置[跨域参数] 这一步可忽略，默认全部域名跨域通过，为安全 应该只配置前端域名<br/>
+<br/>
+有问题或者建议请联系宣言 QQ 59419979，文明交流，无脑者不回复。<br/>
+`, {
+           area: "500px"
+        });
+        return false;
+    }
+
     viewTabBtn.click(function(){
         var type = $(this).attr('login-type');
         $(this).addClass('active').siblings().removeClass('active');

@@ -5,7 +5,6 @@ namespace App\HttpController\Api;
 use App\Model\System\SiamSystemModel;
 use App\Model\Users\SiamUserModel;
 use EasySwoole\EasySwoole\Config;
-use EasySwoole\Http\Annotation\Param;
 use EasySwoole\Http\Message\Status;
 use EasySwoole\Jwt\Jwt;
 use EasySwoole\Validate\Validate;
@@ -63,7 +62,7 @@ class Users extends Base
 
         $systemModel = SiamSystemModel::create()->get();
 
-        // 如果存在并发 则在后续再拼接随机内容当账号 建议1~2位数字
+        // 自动递增的账号分配，可以自己修改账号规则 或者前端新增栏目 提交
         $account = $systemModel->getNewAccount() ?? time();
 
         $pUserInfo = SiamUserModel::create()->get([
@@ -71,7 +70,6 @@ class Users extends Base
         ]);
 
         $data  = [
-            // 'u_id'            => $param['u_id'],
             'u_password'      => $param['u_password'] ?? 'e10adc3949ba59abbe56e057f20f883e',
             'u_name'          => $param['u_name'] ?? '',
             'u_account'       => $param['u_account'] ?? $account,
