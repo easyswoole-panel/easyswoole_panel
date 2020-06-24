@@ -72,7 +72,7 @@ class Users extends Base
         $data  = [
             'u_password'      => $param['u_password'] ?? 'e10adc3949ba59abbe56e057f20f883e',
             'u_name'          => $param['u_name'] ?? '',
-            'u_account'       => $account,
+            'u_account'       => $param['u_account'] ?? $account,
             'p_u_id'          => $param['p_u_id'] ?? '',
             'role_id'         => $param['role_id'],
             'u_status'        => $param['u_status'] ?? '1',
