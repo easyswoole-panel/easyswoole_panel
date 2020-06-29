@@ -1,10 +1,14 @@
 # easyswoole_admin部署教程
 
-在github上切换tag 到1.0版本  下载zip  或者git clone checkout指定tag
 
 v1版本使用mysqli组件+pool
 
-v2版本使用orm组件
+v2版本使用orm组件 建议
+
+
+下载地址：https://github.com/xuanyanwow/easyswoole_admin/tags
+
+下载源码压缩包 
 
 ① 上传源码，并执行 composer install
 
