@@ -18,6 +18,6 @@ class Index  extends Controller
 
     function index()
     {
-        $this->response()->write("hello siam");
+        $this->response()->redirect("./index.html");
     }
 }

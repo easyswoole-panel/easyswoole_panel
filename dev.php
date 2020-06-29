@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * Users: yf
- * Date: 2019-01-01
- * Time: 20:06
- */
-
 return [
     'SERVER_NAME' => "easySiam",
     'MAIN_SERVER' => [
@@ -17,7 +10,9 @@ return [
         'SETTING' => [
             'worker_num' => 8,
             'reload_async' => true,
-            'max_wait_time'=>3
+            'max_wait_time'=>3,
+            'document_root' => './public', // 版本小于v4.4.0时必须为绝对路径
+            'enable_static_handler' => true,
         ],
 	'TASK' => [
 	    'workerNum' => 4,
@@ -32,18 +27,14 @@ return [
     ],
     'MYSQL' => [
         //数据库配置
-        'host'                 => '192.168.23.128',//数据库连接ip
+        'host'                 => '192.168.23.133',//数据库连接ip
         'user'                 => 'root',//数据库用户名
         'password'             => 'root',//数据库密码
-        'database'             => 'siam_admin',//数据库
+        'database'             => 'admin',//数据库
         'port'                 => '3306',//端口
         'timeout'              => '30',//超时时间
         'connect_timeout'      => '5',//连接超时时间
         'charset'              => 'utf8',//字符编码
-        'strict_type'          => false, //开启严格模式，返回的字段将自动转为数字类型
-        'fetch_mode'           => false,//开启fetch模式, 可与pdo一样使用fetch/fetchAll逐行或获取全部结果集(4.0版本以上)
-        'alias'                => '',//子查询别名
-        'isSubQuery'           => false,//是否为子查询
         'max_reconnect_times ' => '3',//最大重连次数
     ],
     /**##################     JWT      #############*/

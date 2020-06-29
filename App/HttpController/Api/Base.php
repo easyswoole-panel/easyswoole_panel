@@ -174,5 +174,10 @@ abstract class Base extends \EasySwoole\Http\AbstractInterface\Controller
     }
 
     abstract protected function getValidateRule(?string $action): ?Validate;
+    
+    protected function validate(Validate $validate)
+    {
+        return $validate->validate($this->request()->getRequestParam());
+    }
 }
 

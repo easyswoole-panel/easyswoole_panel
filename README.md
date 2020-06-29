@@ -6,25 +6,23 @@ v1版本使用mysqli组件+pool
 
 v2版本使用orm组件
 
-① 上传源码  composer install 
+① 上传源码，并执行 composer install
 
-② 开设网站  指向目录 public目录 纯静态 不加载php
+② es安装 (参照es文档安装章节  建议先行运行过hello world 文档过一遍 再尝试本项目) 
 
-③ es安装 (参照es文档安装章节  建议先行运行过hello world 文档过一遍 再尝试本项目) 修改dev.php mysql配置  
+③ 修改dev.php mysql配置  导入mysql结构数据(在public目录下的sql文件)
 
-④ 导入mysql结构数据  在public目录下的sql文件
+④ public/nepadmin/config.js搜索 requestUrl  请求url换成你自己的es服务地址  IP:Port
 
-⑤ public/nepadmin/config.js搜索 requestUrl  请求url换成你自己的es服务地址  IP:Port
+⑤ 访问 IP:Port 自动进入index.html页面
 
-⑥ EasySwooleEvent.php  106行左右（不固定 代码会更新） 设置跨域  填写加入 第二步开设的域名（如果为`*` 则允许所有跨域 不需更改）
+⑥ 管理员账号 1001 123456   测试账号 100083 123456   可以看到测试账号的菜单只有权限管理，点击查看缓存、清除缓存会提示没有权限  （页面权限和接口权限是两回事）
 
-⑦ 管理员账号 1001 123456   测试账号 100083 123456   可以看到测试账号的菜单只有权限管理，点击查看缓存、清除缓存会提示没有权限  （页面权限和接口权限是两回事）
-
-⑧ layui调试模式  在public/index.html 
+⑦ layui调试模式开关 在public/index.html 
 ```
- // version: Date.parse(new Date()),
- debug: false
- ```
+// version: Date.parse(new Date()),
+debug: false
+```
 
 # 作者
 
