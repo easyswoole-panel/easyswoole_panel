@@ -12,7 +12,7 @@ v2版本使用orm组件 建议
 
 ① 上传源码，并执行 composer install
 
-② es安装 (参照es文档安装章节  建议先行运行过hello world 文档过一遍 再尝试本项目) 
+② es安装  php vendor/easyswoole/easyswoole/bin/easyswoole install  所有提示都输入n 回车
 
 ③ 修改dev.php mysql配置  导入mysql结构数据(在public目录下的sql文件)
 
