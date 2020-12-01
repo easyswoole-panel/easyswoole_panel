@@ -38,6 +38,28 @@ class Plugs extends Controller
      */
     public function install()
     {
+        $vendorName = "siam/testPlugs";
+        if (!PlugsAuthService::isPlugs($vendorName)){
+            return $this->writeJson('500', [], '不是合法插件');
+        }
+
+        $config = PlugsAuthService::getPlugsConfig($vendorName);
+        $namespace = $config['namespace'];
+        $version   = $config['version'];
+        // TODO 对比数据库是否安装过 版本号
+
+        // 运行database脚本
+        $installFilePath = PlugsAuthService::plugsPath($vendorName)."/src/database/install_{$version}.php";
+        if (!is_file($installFilePath)){
+            return $this->writeJson('500',[],'安装脚本不存在');
+        }
+        try{
+            require $installFilePath;
+        }catch (\Throwable $e){
+            return $this->writeJson('500', [], $e->getMessage());
+        }
+
+        return $this->writeJson('200', [], '安装成功');
 
     }
 
