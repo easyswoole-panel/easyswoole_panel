@@ -1,17 +1,11 @@
 <?php
 
-namespace App\HttpController\Common;
+namespace App\HttpController\Common\Services;
 
-
-use App\HttpController\Api\SiamSystem;
 use App\Model\System\SiamSystemModel;
-use App\Model\System\SystemBean;
-use App\Model\System\SystemModel;
 use App\Model\Users\SiamUserModel;
-use App\Model\Users\UsersModel;
-use EasySwoole\MysqliPool\Mysql;
 
-class Menu
+class MenuService
 {
     private $auth_list;
     private $onlyMenu = true;
@@ -23,8 +17,6 @@ class Menu
     /**
      * @param int $uid
      * @return array
-     * @throws \EasySwoole\Mysqli\Exception\Exception
-     * @throws \EasySwoole\ORM\Exception\Exception
      * @throws \Throwable
      */
     public function get(int $uid)
@@ -33,11 +25,9 @@ class Menu
         $lists = SiamUserModel::create()->get(['u_id' => $uid])->getAuth();
 
         $newList = [];
-
         foreach ($lists as $key => $value){
             $newList[$value['auth_id']] = $value;
         }
-
         $this->auth_list = $newList;
 
         $systemInfo = SiamSystemModel::create()->get(1);

@@ -150,7 +150,7 @@
                 { title: '用户名', field: 'u_name'},
                 { title: '角色', field: 'role_list',templet: function(d){
                     // 角色id ,分割 显示标签名
-                    let tem = d.role_id.split(",");
+                    let tem = (d.role_id+"").split(",");
                     let html = '';
                     $.each(tem,function(index,value){
                         if ( value !== ''  && value !== null){

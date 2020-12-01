@@ -16,14 +16,11 @@ layui.define(['conf'], function(exports){
             if (token===undefined){
                 return null;
             }
-            var json =window.atob(decodeURIComponent (token));
-            var obj = JSON.parse(json);
-            var timestamp = Date.parse(new Date())/1000;
-            console.log(obj);
-            console.log(obj.nbf);
-            console.log(timestamp);
+            let  obj = jwt_decode(token);
+            let  timestamp = Date.parse(new Date())/1000;
+
             // 在此之前不可用 nbf-10 兼容客户端时间戳慢了几秒
-            if (obj.nbf !== undefined && (obj.nbf - 10) > timestamp){
+            if (obj.nbf !== undefined && (obj.nbf - 30) > timestamp){
                 throw new Error("not before");
             }
             // 是否已经过期

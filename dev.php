@@ -27,15 +27,16 @@ return [
     ],
     'MYSQL' => [
         //数据库配置
-        'host'                 => '192.168.23.133',//数据库连接ip
+        'host'                 => '192.168.109.128',//数据库连接ip
         'user'                 => 'root',//数据库用户名
         'password'             => 'root',//数据库密码
-        'database'             => 'admin',//数据库
+        'database'             => 'newadmin',//数据库
         'port'                 => '3306',//端口
         'timeout'              => '30',//超时时间
         'connect_timeout'      => '5',//连接超时时间
         'charset'              => 'utf8',//字符编码
         'max_reconnect_times ' => '3',//最大重连次数
+        'prefix'               => 'siam_',
     ],
     /**##################     JWT      #############*/
     'JWT' => [

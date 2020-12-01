@@ -2,10 +2,9 @@
 
 namespace App\HttpController\Api;
 
-use App\HttpController\Common\Menu;
+use App\HttpController\Common\Services\MenuService;
 use App\Model\Auths\SiamAuthModel;
 use App\Model\System\SiamSystemModel;
-use EasySwoole\Http\Annotation\Param;
 use EasySwoole\Http\Message\Status;
 use EasySwoole\Validate\Validate;
 
@@ -215,9 +214,9 @@ class Auths extends Base
     {
         switch ($action){
             case 'save_tree_list':
-                $valitor = new Validate();
-                $valitor->addColumn('order')->required();
-                return $valitor;
+                $validate = new Validate();
+                $validate->addColumn('order')->required();
+                return $validate;
                 break;
         }
         return null;
@@ -225,7 +224,7 @@ class Auths extends Base
 
     public function get_menu()
     {
-        $menu = new Menu();
+        $menu = new MenuService();
         $menu->setOnlyMenu(true);
         $tree = $menu->get($this->token['u_id']);
         array_unshift($tree, ['auth_rules'=>'/', 'auth_name' => '首页', 'auth_icon' => 'layui-icon-home']);
@@ -235,7 +234,7 @@ class Auths extends Base
     public function get_tree_list()
     {
         // 只有管理员能调用
-        $menu = new Menu();
+        $menu = new MenuService();
         $menu->setOnlyMenu(false);
         $tree = $menu->get(1);
         $this->writeJson(Status::CODE_OK, $tree, "success");
