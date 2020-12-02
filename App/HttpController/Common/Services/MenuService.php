@@ -2,8 +2,8 @@
 
 namespace App\HttpController\Common\Services;
 
-use App\Model\System\SiamSystemModel;
-use App\Model\Users\SiamUserModel;
+use App\Model\SystemModel;
+use App\Model\UserModel;
 
 class MenuService
 {
@@ -22,7 +22,7 @@ class MenuService
     public function get(int $uid)
     {
         // 先 u_id 查询 分析权限  角色权限+个人权限
-        $lists = SiamUserModel::create()->get(['u_id' => $uid])->getAuth();
+        $lists = UserModel::create()->get(['u_id' => $uid])->getAuth();
 
         $newList = [];
         foreach ($lists as $key => $value){
@@ -30,7 +30,7 @@ class MenuService
         }
         $this->auth_list = $newList;
 
-        $systemInfo = SiamSystemModel::create()->get(1);
+        $systemInfo = SystemModel::create()->get(1);
 
         if ($systemInfo == null){
             return [];

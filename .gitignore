@@ -14,3 +14,9 @@ easyswoole.install
 src/swoole_log.txt
 Temp
 Log
+
+#other ide
+.settings/*s
+.buildpath
+.project
+.user.ini

@@ -6,7 +6,7 @@
  * Time: 21:20
  */
 
-namespace App\HttpController\Common\Services;
+namespace App\Service\Plugs;
 
 
 class PlugsAuthService
@@ -14,8 +14,7 @@ class PlugsAuthService
     const configName = "esPlugsConfig.php";
     public static function plugsPath($vendorName)
     {
-        $vendorPath = EASYSWOOLE_ROOT."/vendor/".$vendorName."/";
-        return $vendorPath;
+        return EASYSWOOLE_ROOT."/vendor/".$vendorName."/";
     }
 
     /**
@@ -26,7 +25,6 @@ class PlugsAuthService
     public static function isPlugs($vendorName)
     {
         $vendorPath = static::plugsPath($vendorName);
-
         if (is_file($vendorPath.static::configName)){
             return true;
         }
@@ -44,8 +42,7 @@ class PlugsAuthService
 
         if (is_file($vendorPath.static::configName)){
             $fullPath =  $vendorPath.static::configName;
-            $config = require $fullPath;
-            return $config;
+            return require $fullPath;
         }
         return null;
     }

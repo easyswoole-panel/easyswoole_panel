@@ -2,8 +2,8 @@
 
 namespace App\HttpController\Api;
 
-use App\Model\System\SiamSystemModel;
-use App\Model\Users\SiamUserModel;
+use App\Model\SystemModel;
+use App\Model\UserModel;
 use EasySwoole\EasySwoole\Config;
 use EasySwoole\Http\Message\Status;
 use EasySwoole\Jwt\Jwt;
@@ -60,12 +60,12 @@ class Users extends Base
     {
         $param = $this->request()->getRequestParam();
 
-        $systemModel = SiamSystemModel::create()->get();
+        $systemModel = SystemModel::create()->get();
 
         // 自动递增的账号分配，可以自己修改账号规则 或者前端新增栏目 提交
         $account = $systemModel->getNewAccount() ?? time();
 
-        $pUserInfo = SiamUserModel::create()->get([
+        $pUserInfo = UserModel::create()->get([
             'u_id' => $this->token['u_id'],
         ]);
 
@@ -83,7 +83,7 @@ class Users extends Base
             'update_time'     => $param['update_time'] ?? '0',
             'u_auth'          => $param['u_auth'],
         ];
-        $model = new SiamUserModel($data);
+        $model = new UserModel($data);
         $rs    = $model->save();
         if ($rs) {
             // 更新层级链
@@ -142,7 +142,7 @@ class Users extends Base
     public function update()
     {
         $param = $this->request()->getRequestParam();
-        $model = new SiamUserModel();
+        $model = new UserModel();
         $info  = $model->get(['u_id' => $param['u_id']]);
         if (empty($info)) {
             $this->writeJson(Status::CODE_BAD_REQUEST, [], '该数据不存在');
@@ -193,7 +193,7 @@ class Users extends Base
     public function getOne()
     {
         $param = $this->request()->getRequestParam();
-        $model = new SiamUserModel();
+        $model = new UserModel();
         $bean  = $model->get(['u_id' => $param['u_id']]);
         if ($bean) {
             $this->writeJson(Status::CODE_OK, $bean, "success");
@@ -226,7 +226,7 @@ class Users extends Base
         $param = $this->request()->getRequestParam();
         $page  = (int) ($param['page'] ?? 1);
         $limit = (int) ($param['limit'] ?? 20);
-        $model = new SiamUserModel();
+        $model = new UserModel();
         if (isset($param['keyword'])){
             $model->where('u_name', "%{$param['keyword']}%", 'like');
         }
@@ -255,7 +255,7 @@ class Users extends Base
     public function delete()
     {
         $param = $this->request()->getRequestParam();
-        $model = new SiamUserModel();
+        $model = new UserModel();
 
         $rs = $model->destroy(['u_id' => $param['u_id']]);
         if ($rs) {
@@ -287,7 +287,7 @@ class Users extends Base
      */
     public function login()
     {
-        $user = SiamUserModel::create()->get([
+        $user = UserModel::create()->get([
             'u_account' => $this->request()->getRequestParam('u_account'),
         ]);
 

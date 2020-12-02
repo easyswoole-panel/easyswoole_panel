@@ -9,8 +9,6 @@
 namespace App\HttpController;
 
 
-use App\Model\Users\UsersBean;
-use EasySwoole\FastCache\Cache;
 use EasySwoole\Http\AbstractInterface\Controller;
 
 class Index  extends Controller

@@ -2,8 +2,7 @@
 
 namespace App\HttpController\Api;
 
-use App\Model\Roles\SiamRoleModel;
-use EasySwoole\Http\Annotation\Param;
+use App\Model\RoleModel;
 use EasySwoole\Http\Message\Status;
 use EasySwoole\Validate\Validate;
 
@@ -53,7 +52,7 @@ class Roles extends Base
             'create_time' => $param['create_time'] ?? '0',
             'update_time' => $param['update_time'] ?? '0',
         ];
-        $model = new SiamRoleModel($data);
+        $model = new RoleModel($data);
 		$rs = $model->save();
 		if ($rs) {
 		    $this->writeJson(Status::CODE_OK, $model->toArray(), "success");
@@ -96,7 +95,7 @@ class Roles extends Base
 	public function update()
 	{
 		$param = $this->request()->getRequestParam();
-		$model = new SiamRoleModel();
+		$model = new RoleModel();
 		$info = $model->get(['role_id' => $param['role_id']]);
 		if (empty($info)) {
 		    $this->writeJson(Status::CODE_BAD_REQUEST, [], '该数据不存在');
@@ -140,7 +139,7 @@ class Roles extends Base
 	public function getOne()
 	{
 		$param = $this->request()->getRequestParam();
-		$model = new SiamRoleModel();
+		$model = new RoleModel();
 		$bean = $model->get(['role_id' => $param['role_id']]);
 		if ($bean) {
 		    $this->writeJson(Status::CODE_OK, $bean, "success");
@@ -173,7 +172,7 @@ class Roles extends Base
         $param = $this->request()->getRequestParam();
         $page  = (int) ($param['page'] ?? 1);
         $limit = (int) ($param['limit'] ?? 20);
-        $model = new SiamRoleModel();
+        $model = new RoleModel();
 		$data = $model->getAll($page, $limit);
 		$this->writeJson(Status::CODE_OK, $data, 'success');
 	}
@@ -199,7 +198,7 @@ class Roles extends Base
 	public function delete()
 	{
 		$param = $this->request()->getRequestParam();
-		$model = new SiamRoleModel();
+		$model = new RoleModel();
 
 		$rs = $model->destroy(['role_id' => $param['role_id']]);
 		if ($rs) {
