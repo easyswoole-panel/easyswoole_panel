@@ -40,6 +40,8 @@ class EasySwooleEvent implements Event
     public static function afterRegisterCall()
     {
         PlugsInitialization::init();
+        // ok
+        
     }
 
     public static function mainServerCreate(EventRegister $register)
