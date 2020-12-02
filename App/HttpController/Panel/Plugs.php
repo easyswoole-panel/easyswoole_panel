@@ -10,6 +10,7 @@ namespace App\HttpController\Panel;
 
 use App\Service\Plugs\PlugsAuthService;
 use App\Service\Plugs\PlugsInstallService;
+use EasySwoole\EasySwoole\Task\TaskManager;
 use EasySwoole\Http\AbstractInterface\Controller;
 
 class Plugs extends Controller
@@ -52,6 +53,15 @@ class Plugs extends Controller
 
         return $this->writeJson('200', [], '安装成功');
 
+    }
+
+    public function test(){
+        $task = TaskManager::getInstance();
+        $taskId = $task->async(function (){
+            echo "开始执行\n";
+            sleep(10);
+        });
+        $this->response()->write($taskId);
     }
 
 }

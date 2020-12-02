@@ -15,9 +15,9 @@ return [
             'enable_static_handler' => true,
         ],
 	'TASK' => [
-	    'workerNum' => 4,
+	    'workerNum' => 1,
 	    'maxRunningNum' => 128,
-	    'timeout' => 15,
+	    'timeout' => 1,
 	]
     ],
     'TEMP_DIR' => null,
