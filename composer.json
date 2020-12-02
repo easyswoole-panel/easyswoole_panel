@@ -15,7 +15,8 @@
         "swoole/ide-helper": "^4.5",
         "easyswoole/validate": "1.2.7",
         "robmorgan/phinx": "^0.12.4",
-        "siam/testPlugs":"1"
+        "easyswoole/code-generation": "^2.0",
+        "siam/adminTestPlugs": "1"
     },
     "repositories": {
         "packagist": {

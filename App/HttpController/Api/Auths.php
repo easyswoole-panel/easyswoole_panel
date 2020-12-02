@@ -3,8 +3,8 @@
 namespace App\HttpController\Api;
 
 use App\HttpController\Common\Services\MenuService;
-use App\Model\Auths\SiamAuthModel;
-use App\Model\System\SiamSystemModel;
+use App\Model\AuthModel;
+use App\Model\SystemModel;
 use EasySwoole\Http\Message\Status;
 use EasySwoole\Validate\Validate;
 
@@ -52,11 +52,11 @@ class Auths extends Base
             'create_time' => $param['create_time'] ?? '0',
             'update_time' => $param['update_time'] ?? '0',
 		];
-		$model = new SiamAuthModel($data);
+		$model = new AuthModel($data);
 		$rs = $model->save();
 		if ($rs) {
 		    // 更新到排序中
-            $system = SiamSystemModel::create()->get();
+            $system = SystemModel::create()->get();
             $auth = json_decode($system->auth_order);
             $auth[] = ['id'=>$model->auth_id];
             $system->auth_order = json_encode($auth);
@@ -100,7 +100,7 @@ class Auths extends Base
 	public function update()
 	{
 		$param = $this->request()->getRequestParam();
-		$model = new SiamAuthModel();
+		$model = new AuthModel();
 		$info = $model->get(['auth_id' => $param['auth_id']]);
 		if (empty($info)) {
 		    $this->writeJson(Status::CODE_BAD_REQUEST, [], '该数据不存在');
@@ -143,7 +143,7 @@ class Auths extends Base
 	public function getOne()
 	{
 		$param = $this->request()->getRequestParam();
-		$model = new SiamAuthModel();
+		$model = new AuthModel();
 		$bean = $model->get(['auth_id' => $param['auth_id']]);
 		if ($bean) {
 		    $this->writeJson(Status::CODE_OK, $bean, "success");
@@ -175,7 +175,7 @@ class Auths extends Base
 		$param = $this->request()->getRequestParam();
 		$page = (int)($param['page']??1);
 		$limit = (int)($param['limit']??20);
-		$model = new SiamAuthModel();
+		$model = new AuthModel();
 		$data = $model->getAll($page,  $limit);
 		$this->writeJson(Status::CODE_OK, $data, 'success');
 	}
@@ -200,7 +200,7 @@ class Auths extends Base
 	public function delete()
 	{
 		$param = $this->request()->getRequestParam();
-		$model = new SiamAuthModel();
+		$model = new AuthModel();
 
 		$rs = $model->destroy(['auth_id' => $param['auth_id']]);
 		if ($rs) {
@@ -254,7 +254,7 @@ class Auths extends Base
         // 字符替换
         $order = str_replace('children', 'child', $order);
 
-        $systemModel = SiamSystemModel::create()->get();
+        $systemModel = SystemModel::create()->get();
         $systemModel->auth_order = $order;
         $res = $systemModel->update();
 

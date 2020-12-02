@@ -1,11 +1,9 @@
 <?php
 
-namespace App\Model\Users;
-use App\Model\Auths\SiamAuthModel;
-use App\Model\Roles\SiamRoleModel;
+namespace App\Model;
 
 /**
- * Class SiamUserModel
+ * Class UserModel
  * Create With Automatic Generator
  * @property $u_id int |
  * @property $u_password string | 用户密码
@@ -21,9 +19,9 @@ use App\Model\Roles\SiamRoleModel;
  * @property $update_time int | 更新时间
  * @property $u_auth string |
  */
-class SiamUserModel extends \App\Model\BaseModel
+class UserModel extends \App\Model\BaseModel
 {
-	protected $tableName = 'siam_users';
+	protected $tableName = 'users';
 
 
 	/**
@@ -57,11 +55,11 @@ class SiamUserModel extends \App\Model\BaseModel
 
         // 管理员 全部权限
         if(in_array(1, $roleIds)) {
-            $auths = SiamAuthModel::create()->all();
+            $auths = AuthModel::create()->all();
             return $auths;
         }
 
-        $roleList = SiamRoleModel::create()->where('role_id', $roleIds, 'in')->all();
+        $roleList = RoleModel::create()->where('role_id', $roleIds, 'in')->all();
 
         // 个人权限
         $authIds = explode(',', $this->u_auth);
@@ -77,7 +75,7 @@ class SiamUserModel extends \App\Model\BaseModel
 
         if (!empty($authIds)){
             $list =
-                SiamAuthModel::create()->where('auth_id', $authIds, 'in')->field('auth_id,auth_name,auth_rules,auth_icon,auth_type')->all();
+                AuthModel::create()->where('auth_id', $authIds, 'in')->field('auth_id,auth_name,auth_rules,auth_icon,auth_type')->all();
             return $list;
         }
 

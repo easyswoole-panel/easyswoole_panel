@@ -1,21 +1,21 @@
 <?php
 
-namespace App\Model\Auths;
+namespace App\Model;
 
 /**
- * Class SiamAuthModel
+ * Class RoleModel
  * Create With Automatic Generator
- * @property $auth_id int | 权限id
- * @property $auth_name string | 权限名
- * @property $auth_rules string | 路由地址
- * @property $auth_icon string | 图标
- * @property $auth_type int | 权限类型 0菜单1按钮
+ * @property $role_id int | 用户id
+ * @property $role_name string | 角色名
+ * @property $role_auth string | 角色权限
+ * @property $role_status int | 角色状态 0正常1禁用
+ * @property $level int | 角色级别 越小权限越高
  * @property $create_time int | 创建时间
  * @property $update_time int | 更新时间
  */
-class SiamAuthModel extends \App\Model\BaseModel
+class RoleModel extends \App\Model\BaseModel
 {
-	protected $tableName = 'siam_auths';
+	protected $tableName = 'roles';
 
 
 	/**

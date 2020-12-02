@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Model\System;
+namespace App\Model;
 
 use EasySwoole\ORM\Exception\Exception;
 
 /**
- * Class SiamSystemModel
+ * Class SystemModel
  * Create With Automatic Generator
  * @property $id int |
  * @property $user_next_id int | 下一个用户id
  * @property $auth_order string | 权限排序
  */
-class SiamSystemModel extends \App\Model\BaseModel
+class SystemModel extends \App\Model\BaseModel
 {
-	protected $tableName = 'siam_system';
+	protected $tableName = 'system';
 
 
     /**

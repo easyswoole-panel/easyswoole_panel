@@ -2,11 +2,8 @@
 
 namespace App\HttpController\Api;
 
-use App\Model\Auths\AuthsBean;
-use App\Model\Auths\AuthsModel;
 use App\Model\Auths\SiamAuthModel;
 use App\Model\Users\SiamUserModel;
-use App\Model\Users\UsersModel;
 use EasySwoole\EasySwoole\Config;
 use EasySwoole\FastCache\Cache;
 use EasySwoole\Jwt\Jwt;
