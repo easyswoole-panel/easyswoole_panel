@@ -8,10 +8,10 @@
 
 namespace App\HttpController\Panel;
 
-use App\Service\Plugs\PlugsAuthService;
-use App\Service\Plugs\PlugsInstallService;
 use EasySwoole\EasySwoole\Task\TaskManager;
 use EasySwoole\Http\AbstractInterface\Controller;
+use Siam\Plugs\service\PlugsAuthService;
+use Siam\Plugs\service\PlugsInstallService;
 
 class Plugs extends Controller
 {
