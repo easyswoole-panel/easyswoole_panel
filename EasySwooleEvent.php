@@ -23,6 +23,7 @@ use EasySwoole\ORM\Db\Connection;
 use EasySwoole\ORM\DbManager;
 use EasySwoole\Spl\SplArray;
 use EasySwoole\Utility\File;
+use Siam\Plugs\PlugsInitialization;
 
 class EasySwooleEvent implements Event
 {
@@ -33,10 +34,19 @@ class EasySwooleEvent implements Event
         $configData = Config::getInstance()->getConf('MYSQL');
         $config = new \EasySwoole\ORM\Db\Config($configData);
         DbManager::getInstance()->addConnection(new Connection($config));
+
+    }
+
+    public static function afterRegisterCall()
+    {
+        PlugsInitialization::init();
+        // ok
+        
     }
 
     public static function mainServerCreate(EventRegister $register)
     {
+
         // // 开启IP限流
         // IpList::getInstance();
         // $class = new class('IpAccessCount') extends AbstractProcess{
