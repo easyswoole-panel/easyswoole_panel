@@ -1,0 +1,245 @@
+
+<style>
+    .apply-logo{width: 100px;height: 100px; display: inline-block}
+    .apply-card{text-align: center;padding: 15px;color: #3F3F3F}
+    .apply-title{padding: 10px 0;font-weight: bold}
+    .apply-desc{margin-bottom:10px;color: #3F3F3F;}
+    .layui-badge{cursor: pointer;}
+    .layui-bg-gray{margin-left: 20px;}
+</style>
+<div class="layui-fluid" id="VIEW-apply" lay-title="应用列表">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">筛选应用</div>
+                <div class="layui-card-body">
+                    <form class="layui-row layui-col-space10 layui-form" lay-filter="form-apply" id="form-apply">
+                        <div class="layui-input-inline" style="width: 120px">
+                            <select name="is_start">
+                                <option value="0">全部应用</option>
+                                <option value="1">未启用</option>
+                                <option value="2">已启用</option>
+                            </select>
+                        </div>
+
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="name" placeholder="应用名称">
+                        </div>
+
+                        <div class="layui-input-inline">
+                            <div class="layui-btn layui-btn " lay-submit lay-filter="search-apply">立即搜索</div>
+                            <button type="reset" class="layui-btn   layui-btn-primary">重置</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-lg12">
+            <div class="layui-row layui-col-space15" id="apply-list">
+                <div class="layui-col-xs6 layui-col-sm3 layui-col-cm2 layui-col-lg2" >
+                    <div class="layui-card apply-card" >
+                        <img src="/public/temimg/1.jpg"class="apply-logo">
+                        <p class="apply-title"> 群发工具 v0.1</p>
+                        <p class="apply-desc">应用的简要描述</p>
+                        <span class="layui-badge">停用</span> <span class="layui-badge layui-bg-gray">卸载</span>
+                    </div>
+                </div>
+                <div class="layui-col-xs6 layui-col-sm3 layui-col-cm2 layui-col-lg2" >
+                    <div class="layui-card apply-card" style="text-align: center">
+                        <img src="/public/temimg/2.jpg"class="apply-logo">
+                        <p class="apply-title"> 群发工具 v0.1</p>
+                        <p class="apply-desc">应用的简要描述</p>
+                        <span class="layui-badge">停用</span> <span class="layui-badge layui-bg-gray">卸载</span>
+                    </div>
+                </div>
+                <div class="layui-col-xs6 layui-col-sm3 layui-col-cm2 layui-col-lg2  " >
+                    <div class="layui-card apply-card" style="text-align: center">
+                        <img src="/public/temimg/3.jpg"class="apply-logo">
+                        <p class="apply-title"> 群发工具 v0.1</p>
+                        <p class="apply-desc">应用的简要描述</p>
+                        <span class="layui-badge">停用</span> <span class="layui-badge layui-bg-gray">卸载</span>
+                    </div>
+                </div>
+                <div class="layui-col-xs6 layui-col-sm3 layui-col-cm2 layui-col-lg2  " >
+                    <div class="layui-card apply-card" style="text-align: center">
+                        <img src="/public/temimg/4.jpg"class="apply-logo">
+                        <p class="apply-title"> 群发工具 v0.1</p>
+                        <p class="apply-desc">应用的简要描述</p>
+                        <span class="layui-badge">停用</span> <span class="layui-badge layui-bg-gray">卸载</span>
+                    </div>
+                </div>
+                <div class="layui-col-xs6 layui-col-sm3 layui-col-cm2 layui-col-lg2  " >
+                    <div class="layui-card apply-card" style="text-align: center">
+                        <img src="/public/temimg/5.jpg"class="apply-logo">
+                        <p class="apply-title"> 群发工具 v0.1</p>
+                        <p class="apply-desc">应用的简要描述</p>
+                        <span class="layui-badge">停用</span> <span class="layui-badge layui-bg-gray">卸载</span>
+                    </div>
+                </div>
+                <div class="layui-col-xs6 layui-col-sm3 layui-col-cm2 layui-col-lg2  " >
+                    <div class="layui-card apply-card" style="text-align: center">
+                        <img src="/public/temimg/6.jpg"class="apply-logo">
+                        <p class="apply-title"> 群发工具 v0.1</p>
+                        <p class="apply-desc">应用的简要描述</p>
+                        <span class="layui-badge">停用</span> <span class="layui-badge layui-bg-gray">卸载</span>
+                    </div>
+                </div>
+                <div class="layui-col-xs6 layui-col-sm3 layui-col-cm2 layui-col-lg2  " >
+                    <div class="layui-card apply-card" >
+                        <img src="/public/temimg/1.jpg"class="apply-logo">
+                        <p class="apply-title"> 群发工具 v0.1</p>
+                        <p class="apply-desc">应用的简要描述</p>
+                        <span class="layui-badge">停用</span> <span class="layui-badge layui-bg-gray">卸载</span>
+                    </div>
+                </div>
+                <div class="layui-col-xs6 layui-col-sm3 layui-col-cm2 layui-col-lg2  " >
+                    <div class="layui-card apply-card" style="text-align: center">
+                        <img src="/public/temimg/2.jpg"class="apply-logo">
+                        <p class="apply-title"> 群发工具 v0.1</p>
+                        <p class="apply-desc">应用的简要描述</p>
+                        <span class="layui-badge">停用</span> <span class="layui-badge layui-bg-gray">卸载</span>
+                    </div>
+                </div>
+                <div class="layui-col-xs6 layui-col-sm3 layui-col-cm2 layui-col-lg2  " >
+                    <div class="layui-card apply-card" style="text-align: center">
+                        <img src="/public/temimg/3.jpg"class="apply-logo">
+                        <p class="apply-title"> 群发工具 v0.1</p>
+                        <p class="apply-desc">应用的简要描述</p>
+                        <span class="layui-badge">停用</span> <span class="layui-badge layui-bg-gray">卸载</span>
+                    </div>
+                </div>
+                <div class="layui-col-xs6 layui-col-sm3 layui-col-cm2 layui-col-lg2  " >
+                    <div class="layui-card apply-card" style="text-align: center">
+                        <img src="/public/temimg/4.jpg"class="apply-logo">
+                        <p class="apply-title"> 群发工具 v0.1</p>
+                        <p class="apply-desc">应用的简要描述</p>
+                        <span class="layui-badge">停用</span> <span class="layui-badge layui-bg-gray">卸载</span>
+                    </div>
+                </div>
+                <div class="layui-col-xs6 layui-col-sm3 layui-col-cm2 layui-col-lg2  " >
+                    <div class="layui-card apply-card" style="text-align: center">
+                        <img src="/public/temimg/5.jpg"class="apply-logo">
+                        <p class="apply-title"> 群发工具 v0.1</p>
+                        <p class="apply-desc">应用的简要描述</p>
+                        <span class="layui-badge">停用</span> <span class="layui-badge layui-bg-gray">卸载</span>
+                    </div>
+                </div>
+                <div class="layui-col-xs6 layui-col-sm3 layui-col-cm2 layui-col-lg2  " >
+                    <div class="layui-card apply-card" style="text-align: center">
+                        <img src="/public/temimg/6.jpg"class="apply-logo">
+                        <p class="apply-title"> 群发工具 v0.1</p>
+                        <p class="apply-desc">应用的简要描述</p>
+                        <span class="layui-badge">停用</span> <span class="layui-badge layui-bg-gray">卸载</span>
+                    </div>
+                </div>
+                <div class="layui-col-xs6 layui-col-sm3 layui-col-cm2 layui-col-lg2  " >
+                    <div class="layui-card apply-card" style="text-align: center">
+                        <img src="/public/temimg/1.jpg" class="apply-logo">
+                        <p class="apply-title"> 群发工具 v0.1</p>
+                        <p class="apply-desc">应用的简要描述</p>
+                        <span class="layui-badge">停用</span> <span class="layui-badge layui-bg-gray">卸载</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="layui-col-lg12 layui-col-space15">
+            <div class="layui-card">
+                <div id="apply-page"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    layui.use(['admin','form','laypage'], function(admin,  form) {
+        var $ = layui.jquery
+            ,laypage=layui.laypage
+            ,form=layui.form
+        var view = $('#VIEW-apply');
+
+        var total = 0; //应用列表数
+        var page =1; //默认第一页
+        var limit=12; //每页显示条数
+        getData({page:page,limit:limit}); //加载数据
+        renderPage(page,limit,total); //分页渲染
+        form.render();
+        //搜索
+        form.on('submit(search-apply)', function (data) {
+            var where = {page:page,limit:limit,name:data.field.name,is_sta:data.field.is_start};
+            getData(where);
+            renderPage(page,limit,total);
+            layer.msg('搜索成功');
+            return false;
+        });
+
+        //异步获取数据
+        function getData(where) {
+            admin.post({
+                api: 'getApplyList',
+                async: false,
+                data:where,
+                success:function (res) {
+                    total =res.result.total;
+                    var data =res.result.list;
+                    var html='';
+                    $.each(data,function(i){
+                        html+=' <div class="layui-col-xs6 layui-col-sm3 layui-col-cm2 layui-col-lg2  " > <div class="layui-card apply-card" style="text-align: center">\n' +
+                            '<img src="'+data[i].logo+'"class="apply-logo">\n' +
+                            '<p class="apply-title"> '+data[i].name+' '+ data[i].version+'</p>\n' +
+                            '<p class="apply-desc">'+data[i].desc+'</p>\n' ;
+                        //根据应用状态显示按钮
+                        if(data[i].is_start==1){
+                            html+= '<span class="layui-badge apply-stop" data-id="'+data[i].id+'">停用</span> <span class="layui-badge layui-bg-gray apply-uninstall" data-id="'+data[i].id+'">卸载</span>\n'
+                        }else{
+                            html+='<span class="layui-badge layui-bg-green apply-install" data-id="'+data[i].id+'">启用</span>'
+                        }
+                        html+= '</div></div>';
+                    });
+                    $('#apply-list').html(html);//渲染HTML
+
+                }
+            });
+        }
+        //分页完整功能
+        function renderPage(page,limit,total) {
+            laypage.render({
+                elem: 'apply-page'
+                ,count: total
+                ,curr:page
+                ,limit:limit
+                ,layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip']
+                ,limits:[12,24,48,96]
+                ,jump: function(obj){
+                    page=obj.curr;
+                    limit=obj.limit;
+                    var where = $('#form-apply').serialize();
+                    where+='&page='+page+'&limit='+limit
+
+                    console.log(where)
+                    getData(where)
+
+                }
+            });
+        }
+
+        //停用应用
+        $(document).on('click','.apply-stop',function () {
+            var id =$(this).attr('data-id')
+            layer.msg('停用应用ID：'+id)
+        })
+        //安装应用
+        $(document).on('click','.apply-install',function () {
+            var id =$(this).attr('data-id')
+            layer.msg('安装应用ID：'+id)
+        })
+        //卸载应用
+        $(document).on('click','.apply-uninstall',function () {
+
+            var id =$(this).attr('data-id')
+            layer.msg('卸载应用ID：'+id)
+        })
+    })
+</script>

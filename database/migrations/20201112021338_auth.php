@@ -98,7 +98,7 @@ final class Auth extends AbstractMigration
                 ],
                 [
                     'auth_name'   => "插件市场",
-                    'auth_rules'  => "/plugs/index",
+                    'auth_rules'  => "/siam/plugs/list",
                     'auth_icon'   => "layui-icon-piechart",
                     'auth_type'   => 1,
                     'create_time' => time(),
