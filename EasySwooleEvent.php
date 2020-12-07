@@ -10,10 +10,12 @@ namespace EasySwoole\EasySwoole;
 
 
 use EasySwoole\Component\Process\Exception;
+use EasySwoole\EasySwoole\Http\Dispatcher;
 use EasySwoole\EasySwoole\Swoole\EventRegister;
 use EasySwoole\EasySwoole\AbstractInterface\Event;
 use EasySwoole\FastCache\Cache;
 use EasySwoole\FastCache\Exception\RuntimeError;
+use EasySwoole\Http\AbstractInterface\AbstractRouter;
 use EasySwoole\Http\Message\Status;
 use EasySwoole\Http\Request;
 use EasySwoole\Http\Response;
@@ -34,14 +36,13 @@ class EasySwooleEvent implements Event
         $configData = Config::getInstance()->getConf('MYSQL');
         $config = new \EasySwoole\ORM\Db\Config($configData);
         DbManager::getInstance()->addConnection(new Connection($config));
-
-    }
-
-    public static function afterRegisterCall()
-    {
-        PlugsInitialization::init();
-        // ok
-        
+        // 插件Basic初始化
+        Dispatcher::getInstance()->setOnRouterCreate(function(AbstractRouter $router){
+            \App\Utility\Event::getInstance()->set("ROUTER_CREATE", function (AbstractRouter $router){
+                PlugsInitialization::init($router);
+            });
+            \App\Utility\Event::getInstance()->hook("ROUTER_CREATE", $router);
+        });
     }
 
     public static function mainServerCreate(EventRegister $register)
