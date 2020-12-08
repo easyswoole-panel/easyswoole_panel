@@ -178,8 +178,7 @@
         //异步获取数据
         function getData(where) {
             admin.post({
-                api: 'getApplyList',
-                async: false,
+                url: 'plugs/get_list',
                 data:where,
                 success:function (res) {
                     total =res.result.total;
@@ -189,22 +188,23 @@
                         html+=' <div class="layui-col-xs6 layui-col-sm3 layui-col-cm2 layui-col-lg2  " > <div class="layui-card apply-card" style="text-align: center">\n' +
                             '<img src="'+data[i].logo+'"class="apply-logo">\n' +
                             '<p class="apply-title"> '+data[i].name+' '+ data[i].version+'</p>\n' +
-                            '<p class="apply-desc">'+data[i].desc+'</p>\n' ;
+                            '<p class="apply-desc">'+data[i].des+'</p>\n' ;
                         //根据应用状态显示按钮
-                        if(data[i].is_start==1){
-                            html+= '<span class="layui-badge apply-stop" data-id="'+data[i].id+'">停用</span> <span class="layui-badge layui-bg-gray apply-uninstall" data-id="'+data[i].id+'">卸载</span>\n'
+                        if(data[i].installed==true){
+                            html+= '<span class="layui-badge apply-stop" data-id="'+data[i].id+'">主页</span> ' ;
+                            // html+='<span class="layui-badge layui-bg-gray apply-uninstall" data-id="'+data[i].id+'">卸载</span>\n';
                         }else{
                             html+='<span class="layui-badge layui-bg-green apply-install" data-id="'+data[i].id+'">启用</span>'
                         }
                         html+= '</div></div>';
                     });
                     $('#apply-list').html(html);//渲染HTML
-
+                    renderPage(page,limit,total, false);
                 }
             });
         }
         //分页完整功能
-        function renderPage(page,limit,total) {
+        function renderPage(page,limit,total, isLoad = true) {
             laypage.render({
                 elem: 'apply-page'
                 ,count: total
@@ -213,14 +213,13 @@
                 ,layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip']
                 ,limits:[12,24,48,96]
                 ,jump: function(obj){
+                    if (!isLoad) return false;
                     page=obj.curr;
                     limit=obj.limit;
                     var where = $('#form-apply').serialize();
                     where+='&page='+page+'&limit='+limit
 
-                    console.log(where)
                     getData(where)
-
                 }
             });
         }
