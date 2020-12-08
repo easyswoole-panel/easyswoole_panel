@@ -2,8 +2,8 @@
 
 namespace App\HttpController\Api;
 
-use App\Model\Auths\SiamAuthModel;
-use App\Model\Users\SiamUserModel;
+use App\Model\AuthModel;
+use App\Model\UserModel;
 use EasySwoole\EasySwoole\Config;
 use EasySwoole\FastCache\Cache;
 use EasySwoole\Jwt\Jwt;
@@ -127,7 +127,7 @@ abstract class Base extends \EasySwoole\Http\AbstractInterface\Controller
         if($policy === null){
             $policy = new Policy();
             // 用户权限
-            $userModel = SiamUserModel::create()->get($u_id);
+            $userModel = UserModel::create()->get($u_id);
             $userAuth  = $userModel->getAuth();
             foreach ($userAuth as $key => $value) {
                 $policy->addPath($value['auth_rules'],PolicyNode::EFFECT_ALLOW);
@@ -154,7 +154,7 @@ abstract class Base extends \EasySwoole\Http\AbstractInterface\Controller
         $cache = Cache::getInstance();
         $authRes = $cache->get('shouldvif_api_'.md5($path));
         if ($authRes === null){
-            $auth = SiamAuthModel::create()->get(['auth_rules' => $path]);
+            $auth = AuthModel::create()->get(['auth_rules' => $path]);
             // 没有设置该api规则 所以不需要验证
             if ($auth===null){
                 $cache->set('shouldvif_api_'.md5($path),  false, 3*60);
