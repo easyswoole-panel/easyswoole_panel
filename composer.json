@@ -16,7 +16,8 @@
         "easyswoole/validate": "1.2.7",
         "robmorgan/phinx": "0.12.4",
         "easyswoole/code-generation": "^2.0",
-        "siam/plugs":"dev-main"
+        "siam/plugs":"dev-main",
+        "chrisplugs/database-manage": "dev-main"
     },
     "repositories": {
         "packagist": {

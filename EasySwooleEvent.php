@@ -9,6 +9,7 @@
 namespace EasySwoole\EasySwoole;
 
 
+use Co\Scheduler;
 use EasySwoole\Component\Process\Exception;
 use EasySwoole\EasySwoole\Http\Dispatcher;
 use EasySwoole\EasySwoole\Swoole\EventRegister;
@@ -25,6 +26,7 @@ use EasySwoole\ORM\Db\Connection;
 use EasySwoole\ORM\DbManager;
 use EasySwoole\Spl\SplArray;
 use EasySwoole\Utility\File;
+use Siam\Plugs\common\PlugsContain;
 use Siam\Plugs\PlugsInitialization;
 
 class EasySwooleEvent implements Event
@@ -33,38 +35,37 @@ class EasySwooleEvent implements Event
     public static function initialize()
     {
         date_default_timezone_set('Asia/Shanghai');
+
+        // 初始化数据库ORM
         $configData = Config::getInstance()->getConf('MYSQL');
         $config = new \EasySwoole\ORM\Db\Config($configData);
         DbManager::getInstance()->addConnection(new Connection($config));
+
+
         // 插件Basic初始化
         Dispatcher::getInstance()->setOnRouterCreate(function(AbstractRouter $router){
-            \App\Utility\Event::getInstance()->set("ROUTER_CREATE", function (AbstractRouter $router){
-                PlugsInitialization::init($router);
+            \App\Utility\Event::getInstance()->add("ROUTER_CREATE", function (AbstractRouter $router){
+                PlugsContain::$router = $router;
+                PlugsInitialization::initPlugsRouter($router);
+                PlugsInitialization::initPlugsSystem();
             });
             \App\Utility\Event::getInstance()->hook("ROUTER_CREATE", $router);
         });
+
+
+
     }
 
     public static function mainServerCreate(EventRegister $register)
     {
+        $scheduler = new Scheduler();
+        $scheduler->add(function () {
+        });
+        $scheduler->start();
 
-        // // 开启IP限流
-        // IpList::getInstance();
-        // $class = new class('IpAccessCount') extends AbstractProcess{
-        //     protected function run($arg)
-        //     {
-        //         $this->addTick(5*1000, function (){
-        //             /**
-        //              * 正常用户不会有一秒超过6次的api请求
-        //              * 做列表记录并清空
-        //              */
-        //             $list = IpList::getInstance()->accessList(30);
-        //             IpList::getInstance()->clear();
-        //         });
-        //     }
-        // };
-        // ServerManager::getInstance()->getSwooleServer()->addProcess($class->getProcess());
 
+        DbManager::getInstance()->getConnection()->getClientPool()->reset();
+        \Swoole\Timer::clearAll();
 
         // ***************** 注册fast-cache *****************
         // 每隔5秒将数据存回文件
@@ -133,17 +134,6 @@ class EasySwooleEvent implements Event
 
     public static function onRequest(Request $request, Response $response): bool
     {
-        // IP限流
-        // $fd = $request->getSwooleRequest()->fd;
-        // $ip = ServerManager::getInstance()->getSwooleServer()->getClientInfo($fd)['remote_ip'];
-        // if (IpList::getInstance()->access($ip) > 3) {
-        //     /**
-        //      * 直接强制关闭连接
-        //      */
-        //     ServerManager::getInstance()->getSwooleServer()->close($fd);
-        //     echo '被拦截'.PHP_EOL;
-        //     return false;
-        // }
 
         $allow_origin = array(
             // "http://www.siammm.cn",
