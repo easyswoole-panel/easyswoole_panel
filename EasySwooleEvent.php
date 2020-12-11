@@ -11,6 +11,7 @@ namespace EasySwoole\EasySwoole;
 
 use Co\Scheduler;
 use EasySwoole\Component\Process\Exception;
+use EasySwoole\Component\TableManager;
 use EasySwoole\EasySwoole\Http\Dispatcher;
 use EasySwoole\EasySwoole\Swoole\EventRegister;
 use EasySwoole\EasySwoole\AbstractInterface\Event;
@@ -28,6 +29,7 @@ use EasySwoole\Spl\SplArray;
 use EasySwoole\Utility\File;
 use Siam\Plugs\common\PlugsContain;
 use Siam\Plugs\PlugsInitialization;
+use Swoole\Table;
 
 class EasySwooleEvent implements Event
 {
@@ -43,6 +45,12 @@ class EasySwooleEvent implements Event
 
 
         // 插件Basic初始化
+        TableManager::getInstance()->add("plugs_status", [
+            'init_ed' => ['type'=>Table::TYPE_INT,'size'=>2]
+        ], 1);
+        TableManager::getInstance()->get("plugs_status")->set('1', [
+            'init_ed' => 0
+        ]);
         Dispatcher::getInstance()->setOnRouterCreate(function(AbstractRouter $router){
             \App\Utility\Event::getInstance()->add("ROUTER_CREATE", function (AbstractRouter $router){
                 PlugsContain::$router = $router;
@@ -53,19 +61,10 @@ class EasySwooleEvent implements Event
         });
 
 
-
     }
 
     public static function mainServerCreate(EventRegister $register)
     {
-        $scheduler = new Scheduler();
-        $scheduler->add(function () {
-        });
-        $scheduler->start();
-
-
-        DbManager::getInstance()->getConnection()->getClientPool()->reset();
-        \Swoole\Timer::clearAll();
 
         // ***************** 注册fast-cache *****************
         // 每隔5秒将数据存回文件
