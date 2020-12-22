@@ -20,3 +20,5 @@ Log
 .buildpath
 .project
 .user.ini
+
+restart.log
