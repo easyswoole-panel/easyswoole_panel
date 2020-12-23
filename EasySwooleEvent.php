@@ -10,6 +10,7 @@ namespace EasySwoole\EasySwoole;
 
 
 use Co\Scheduler;
+use EasySwoole\Component\Di;
 use EasySwoole\Component\Process\Exception;
 use EasySwoole\Component\TableManager;
 use EasySwoole\EasySwoole\Http\Dispatcher;
@@ -28,6 +29,7 @@ use EasySwoole\ORM\DbManager;
 use EasySwoole\Spl\SplArray;
 use EasySwoole\Utility\File;
 use Siam\Plugs\common\PlugsContain;
+use Siam\Plugs\common\utils\PlugsHook;
 use Siam\Plugs\PlugsInitialization;
 use Swoole\Table;
 
@@ -52,12 +54,12 @@ class EasySwooleEvent implements Event
             'init_ed' => 0
         ]);
         Dispatcher::getInstance()->setOnRouterCreate(function(AbstractRouter $router){
-            \App\Utility\Event::getInstance()->add("ROUTER_CREATE", function (AbstractRouter $router){
+            PlugsHook::getInstance()->add("ROUTER_CREATE", function (AbstractRouter $router){
                 PlugsContain::$router = $router;
                 PlugsInitialization::initPlugsRouter($router);
                 PlugsInitialization::initPlugsSystem();
             });
-            \App\Utility\Event::getInstance()->hook("ROUTER_CREATE", $router);
+            PlugsHook::getInstance()->hook("ROUTER_CREATE", $router);
         });
 
 
@@ -157,10 +159,22 @@ class EasySwooleEvent implements Event
 
         $response->withHeader('Content-type', 'application/json;charset=utf-8');
 
+        try {
+            PlugsHook::getInstance()->hook('ON_REQUEST', $request, $response);
+        } catch (\Throwable $e) {
+            echo $e->getMessage()."\n";
+            return false;
+        }
+
         return true;
     }
 
     public static function afterRequest(Request $request, Response $response): void
     {
+        try {
+            PlugsHook::getInstance()->hook('AFTER_REQUEST', $request, $response);
+        } catch (\Throwable $e) {
+            echo $e->getMessage()."\n";
+        }
     }
 }
