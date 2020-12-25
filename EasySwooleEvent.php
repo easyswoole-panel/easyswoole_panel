@@ -46,6 +46,8 @@ class EasySwooleEvent implements Event
         $config = new \EasySwoole\ORM\Db\Config($configData);
         DbManager::getInstance()->addConnection(new Connection($config));
 
+        // 初始化插件系统  如迁移所有插件到文件，运行他们的初始化逻辑
+        PlugsInitialization::initPlugsSystem();
     }
 
     public static function mainServerCreate(EventRegister $register)
