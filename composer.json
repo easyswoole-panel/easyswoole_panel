@@ -17,8 +17,8 @@
         "robmorgan/phinx": "0.12.4",
         "easyswoole/code-generation": "^2.0",
         "siam/plugs":"1.0.1",
-        "chrisplugs/database-manage": "1.0.1",
-        "chrisplugs/create-script": "1.0.0"
+        "chrisplugs/database-manage": "^1.0.2",
+        "chrisplugs/create-script": "^1.0.4"
 
     },
     "repositories": {
