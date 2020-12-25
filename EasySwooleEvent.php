@@ -14,6 +14,7 @@ use EasySwoole\Component\Di;
 use EasySwoole\Component\Process\Exception;
 use EasySwoole\Component\TableManager;
 use EasySwoole\EasySwoole\Http\Dispatcher;
+use EasySwoole\EasySwoole\Swoole\EventHelper;
 use EasySwoole\EasySwoole\Swoole\EventRegister;
 use EasySwoole\EasySwoole\AbstractInterface\Event;
 use EasySwoole\FastCache\Cache;
@@ -45,29 +46,14 @@ class EasySwooleEvent implements Event
         $config = new \EasySwoole\ORM\Db\Config($configData);
         DbManager::getInstance()->addConnection(new Connection($config));
 
-
-        // 插件Basic初始化
-        TableManager::getInstance()->add("plugs_status", [
-            'init_ed' => ['type'=>Table::TYPE_INT,'size'=>2]
-        ], 1);
-        TableManager::getInstance()->get("plugs_status")->set('1', [
-            'init_ed' => 0
-        ]);
-        Dispatcher::getInstance()->setOnRouterCreate(function(AbstractRouter $router){
-            PlugsHook::getInstance()->add("ROUTER_CREATE", function (AbstractRouter $router){
-                PlugsContain::$router = $router;
-                PlugsInitialization::initAutoload();
-                PlugsInitialization::initPlugsRouter($router);
-                PlugsInitialization::initPlugsSystem();
-            });
-            PlugsHook::getInstance()->hook("ROUTER_CREATE", $router);
-        });
-
-
     }
 
     public static function mainServerCreate(EventRegister $register)
     {
+
+        // TODO 注册onWorkerStart事件 处理自动加载
+        // PlugsInitialization::initAutoload();
+
 
         // ***************** 注册fast-cache *****************
         // 每隔5秒将数据存回文件

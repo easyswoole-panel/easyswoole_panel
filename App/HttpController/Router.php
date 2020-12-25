@@ -13,17 +13,6 @@ class Router extends AbstractRouter
 {
     function initialize(RouteCollector $routeCollector)
     {
-        /*
-          * eg path : /router/index.html  ; /router/ ;  /router
-         */
-        $routeCollector->get('/router','/test');
-        /*
-         * eg path : /closure/index.html  ; /closure/ ;  /closure
-         */
-        $routeCollector->get('/closure',function (Request $request,Response $response){
-            $response->write('this is closure router');
-            //不再进入控制器解析
-            return false;
-        });
+        // TODO 在这里调用 插件初始化系统到initRouter  [这个方法需要新增]s
     }
 }
