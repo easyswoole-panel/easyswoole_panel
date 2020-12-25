@@ -56,6 +56,7 @@ class EasySwooleEvent implements Event
         Dispatcher::getInstance()->setOnRouterCreate(function(AbstractRouter $router){
             PlugsHook::getInstance()->add("ROUTER_CREATE", function (AbstractRouter $router){
                 PlugsContain::$router = $router;
+                PlugsInitialization::initAutoload();
                 PlugsInitialization::initPlugsRouter($router);
                 PlugsInitialization::initPlugsSystem();
             });

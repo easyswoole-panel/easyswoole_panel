@@ -470,8 +470,14 @@ layui
           }
           params.url = conf.requestUrl + layui.api[params.api]
         } else if (params.url) {
+          params.url = params.url.replace(/\/\//g, "/");
+          if(params.url.substr(0,1) === "/"){
+            params.url = params.url.substr(1, params.url.length - 1);
+          }
+
           params.url = conf.requestUrl + params.url
         }
+
 
         var defaultParams = {
           timeout: 5000,
