@@ -47,14 +47,22 @@ class EasySwooleEvent implements Event
         DbManager::getInstance()->addConnection(new Connection($config));
 
         // 初始化插件系统  如迁移所有插件到文件，运行他们的初始化逻辑
-        PlugsInitialization::initPlugsSystem();
+        $scheduler = new Scheduler();
+        $scheduler->add(function() {
+            PlugsInitialization::initPlugsSystem();
+            DbManager::getInstance()->getConnection()->getClientPool()->reset();
+        });
+        $scheduler->start();
+        \Swoole\Timer::clearAll();
     }
 
     public static function mainServerCreate(EventRegister $register)
     {
 
-        // TODO 注册onWorkerStart事件 处理自动加载
-        // PlugsInitialization::initAutoload();
+        // 注册onWorkerStart事件 处理自动加载
+        $register->add(EventRegister::onWorkerStart, function(\swoole_server $server, $workerIds){
+             PlugsInitialization::initAutoload();
+        });
 
 
         // ***************** 注册fast-cache *****************
