@@ -15,7 +15,7 @@
  
 
 # 安装教程
-
+```
 1.下载源码，可以是clone也可以是下载打了tag的源码
 2.安装composer依赖 `composer install或composer update`
 3.安装easyswoole `./vendor/bin/eayswoole install`
@@ -24,6 +24,7 @@
 6.编辑前端config.js改为自己的url地址
 7.打开后台查看是否正常
 8.进入插件市场安装插件
+```
 
 ## 插件安装原理
 
@@ -32,12 +33,12 @@
 插件源码使用composer管理，也可以像微擎一样放在Addons目录中。
 
 ### composer方式
-
+```
 1.composer require 插件包
 2.重启服务
 3.在插件市场刷新列表 查看是否引入正常
 4.点击安装插件（此处的安装是执行插件内部的安装逻辑，比如创建数据表、迁移数据文件等）
-
+```
 ### Addons目录
 
 此处是为了兼容开发流程、第三方插件包。`后续会提供插件开发规范文档`
