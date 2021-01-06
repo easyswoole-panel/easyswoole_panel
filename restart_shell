@@ -6,25 +6,4 @@ FILE="./Log/siam.txt"
 echo $datetime >> $FILE
 
 # stop server
-php easyswoole server stop -force;
-
-# listen stop finish
-oldStatus=`lsof -i:9501|grep -v "PID" | awk '{print $2}'`
-
-max_value="5"
-while [ "$oldStatus" != "" ]
-do
-    echo "服务还在,等待..."
-    sleep 1
-    max_value=`expr $max_value - 1`
-    if [ $max_value -le 0 ];
-    then
-         exit 1;
-    fi
-done
-
-echo "ok server is done";
-# start server
-echo "start server again";
-
-php easyswoole server start -d;
+php easyswoole server restart -d;

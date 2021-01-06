@@ -512,7 +512,6 @@ layui
               if (res.responseJSON && res.responseJSON.msg){
                 layer.msg(res.responseJSON.msg)
               }
-              self.log('请检查您的网络连接，错误信息：' + JSON.stringify(res))
             }
 
             if ($.isFunction(error)) error(res)
