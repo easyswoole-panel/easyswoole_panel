@@ -1,9 +1,5 @@
 # V3版本更名Panel 
 
-开发中！开发中！开发中！开发中！
-
-请下载打了tag到 V1 V2版本  看最下方的安装教程
-
 ## V3 Introduction
 
 核心 :pushpin:  可视化管理一切
@@ -18,8 +14,43 @@
 - :page_facing_up: 基于注解的API文档 在线生成查看
  
 
+# 安装教程
 
-# easyswoole_admin部署教程
+1.下载源码，可以是clone也可以是下载打了tag的源码
+2.安装composer依赖 `composer install或composer update`
+3.安装easyswoole `./vendor/bin/eayswoole install`
+4.编辑数据库配置 dev.php
+5.运行数据库迁移 `./vendor/bin/phinx migrate`
+6.编辑前端config.js改为自己的url地址
+7.打开后台查看是否正常
+8.进入插件市场安装插件
+
+## 插件安装原理
+
+有使用过微擎相关的用户应该比较容易理解以下逻辑
+
+插件源码使用composer管理，也可以像微擎一样放在Addons目录中。
+
+### composer方式
+
+1.composer require 插件包
+2.重启服务
+3.在插件市场刷新列表 查看是否引入正常
+4.点击安装插件（此处的安装是执行插件内部的安装逻辑，比如创建数据表、迁移数据文件等）
+
+### Addons目录
+
+此处是为了兼容开发流程、第三方插件包。`后续会提供插件开发规范文档`
+
+简单来说就是把插件包 解压放入Addons目录，需要注意的是，需要在packlist.php数组中 增加插件包名 才能扫描到
+
+然后接下来的步骤就跟composer方式一样，在后台查看和安装 
+
+
+
+
+
+# 旧版本部署教程
 
 
 v1版本使用mysqli组件+pool
