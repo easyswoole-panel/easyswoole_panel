@@ -18,7 +18,6 @@
         "easyswoole/code-generation": "^2.0",
         "siam/plugs":"dev-main",
         "siam/server-manage-plugs":"^1.0.0",
-        "chrisplugs/database-manage": "^1.0.2",
         "chrisplugs/create-script": "^1.0.4"
     },
     "repositories": {
