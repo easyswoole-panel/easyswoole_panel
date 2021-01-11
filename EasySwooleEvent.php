@@ -49,6 +49,7 @@ class EasySwooleEvent implements Event
         // 初始化插件系统  如迁移所有插件到文件，运行他们的初始化逻辑
         $scheduler = new Scheduler();
         $scheduler->add(function() {
+            PlugsInitialization::initAutoload();
             PlugsInitialization::initPlugsSystem();
             DbManager::getInstance()->getConnection()->getClientPool()->reset();
             \Swoole\Timer::clearAll();
