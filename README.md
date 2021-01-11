@@ -8,10 +8,10 @@
 - :snail: EasySwoole服务在线管理，重载、关闭服务(调试不再那么痛苦)
 - :hammer: IP限流器（可视化配置，总限流、分组限流、账号token限流等）
 - 开发中 :pencil2: 数据库备份管理
-- 开发中 :page_facing_up: fast-cache面板，一键开启数据落地(无需再像以前一样写上百行代码了)，在线查看管理数据
-- 开发中 :page_facing_up: CURD在线生成，解放你的双手
-- 开发中 :page_facing_up: 连接池使用率  如ORM REDIS 等连接池 可以实时看到状态、分析使用情况
-- 开发中 :page_facing_up: 基于注解的API文档 在线生成查看
+- 开发中 :bricks: fast-cache面板，一键开启数据落地(无需再像以前一样写上百行代码了)，在线查看管理数据
+- 开发中 :raised_hand_with_fingers_splayed: CURD在线生成，解放你的双手
+- 开发中 :abacus: 连接池使用率  如ORM REDIS 等连接池 可以实时看到状态、分析使用情况
+- 开发中 :book: 基于注解的API文档 在线生成查看
  
 
 # 安装教程
