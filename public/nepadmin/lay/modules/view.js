@@ -536,7 +536,10 @@ layui
         $.ajax(params)
       };
       self.renderTable = function(params){
-        params.url = conf.requestUrl + layui.api[params.api];
+        if (!params.url){
+            params.url = conf.requestUrl + layui.api[params.api];    
+        }
+        
         params.headers = conf.requestHeaders || {};
 
         if ($.isFunction(conf.table.parseData)){

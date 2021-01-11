@@ -51,9 +51,9 @@ class EasySwooleEvent implements Event
         $scheduler->add(function() {
             PlugsInitialization::initPlugsSystem();
             DbManager::getInstance()->getConnection()->getClientPool()->reset();
+            \Swoole\Timer::clearAll();
         });
         $scheduler->start();
-        \Swoole\Timer::clearAll();
     }
 
     public static function mainServerCreate(EventRegister $register)
