@@ -1,10 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: yf
- * Date: 2018/5/28
- * Time: 下午6:33
- */
+
 
 namespace EasySwoole\EasySwoole;
 
@@ -12,35 +7,27 @@ namespace EasySwoole\EasySwoole;
 use Co\Scheduler;
 use EasySwoole\Component\Di;
 use EasySwoole\Component\Process\Exception;
-use EasySwoole\Component\TableManager;
-use EasySwoole\EasySwoole\Http\Dispatcher;
-use EasySwoole\EasySwoole\Swoole\EventHelper;
-use EasySwoole\EasySwoole\Swoole\EventRegister;
 use EasySwoole\EasySwoole\AbstractInterface\Event;
+use EasySwoole\EasySwoole\Swoole\EventRegister;
 use EasySwoole\FastCache\Cache;
+use EasySwoole\FastCache\CacheProcessConfig;
 use EasySwoole\FastCache\Exception\RuntimeError;
-use EasySwoole\Http\AbstractInterface\AbstractRouter;
+use EasySwoole\FastCache\SyncData;
 use EasySwoole\Http\Message\Status;
 use EasySwoole\Http\Request;
 use EasySwoole\Http\Response;
-use EasySwoole\FastCache\CacheProcessConfig;
-use EasySwoole\FastCache\SyncData;
 use EasySwoole\ORM\Db\Connection;
 use EasySwoole\ORM\DbManager;
 use EasySwoole\Spl\SplArray;
 use EasySwoole\Utility\File;
-use Siam\Plugs\common\PlugsContain;
 use Siam\Plugs\common\utils\PlugsHook;
 use Siam\Plugs\PlugsInitialization;
-use Swoole\Table;
 
 class EasySwooleEvent implements Event
 {
-
     public static function initialize()
     {
         date_default_timezone_set('Asia/Shanghai');
-
         // 初始化数据库ORM
         $configData = Config::getInstance()->getConf('MYSQL');
         $config = new \EasySwoole\ORM\Db\Config($configData);
@@ -48,23 +35,64 @@ class EasySwooleEvent implements Event
 
         // 初始化插件系统  如迁移所有插件到文件，运行他们的初始化逻辑
         $scheduler = new Scheduler();
-        $scheduler->add(function() {
+        $scheduler->add(function () {
             PlugsInitialization::initAutoload();
             PlugsInitialization::initPlugsSystem();
             DbManager::getInstance()->getConnection()->getClientPool()->reset();
             \Swoole\Timer::clearAll();
         });
         $scheduler->start();
+
+        Di::getInstance()->set(SysConst::HTTP_GLOBAL_ON_REQUEST, function (Request $request, Response $response
+        ): bool {
+            $allow_origin = array(
+                // "http://www.siammm.cn",
+                // 为了安全，应该配置指定域名才允许跨域
+            );
+
+            $origin = $request->getHeader('origin');
+
+            if ($origin !== []) {
+                $origin = $origin[0];
+                if (empty($allow_origin) || in_array($origin, $allow_origin)) {
+                    $response->withHeader('Access-Control-Allow-Origin', $origin);
+                    $response->withHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+                    $response->withHeader('Access-Control-Allow-Credentials', 'true');
+                    $response->withHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, token');
+                    if ($request->getMethod() === 'OPTIONS') {
+                        $response->withStatus(Status::CODE_OK);
+                        return false;
+                    }
+                }
+            }
+
+            $response->withHeader('Content-type', 'application/json;charset=utf-8');
+
+            try {
+                PlugsHook::getInstance()->hook('ON_REQUEST', $request, $response);
+            } catch (\Throwable $e) {
+                echo $e->getMessage() . "\n";
+                return false;
+            }
+
+            return true;
+        });
+
+        Di::getInstance()->set(SysConst::HTTP_GLOBAL_AFTER_REQUEST, function (Request $request, Response $response): void {
+            try {
+                PlugsHook::getInstance()->hook('AFTER_REQUEST', $request, $response);
+            } catch (\Throwable $e) {
+                echo $e->getMessage() . "\n";
+            }
+        });
     }
 
     public static function mainServerCreate(EventRegister $register)
     {
-
         // 注册onWorkerStart事件 处理自动加载
-        $register->add(EventRegister::onWorkerStart, function(\swoole_server $server, $workerIds){
-             PlugsInitialization::initAutoload();
+        $register->add(EventRegister::onWorkerStart, function (\swoole_server $server, $workerIds) {
+            PlugsInitialization::initAutoload();
         });
-
 
         // ***************** 注册fast-cache *****************
         // 每隔5秒将数据存回文件
@@ -127,52 +155,5 @@ class EasySwooleEvent implements Event
             echo "[Warn] --> fast-cache注册失败\n";
         }
 
-
-
-    }
-
-    public static function onRequest(Request $request, Response $response): bool
-    {
-
-        $allow_origin = array(
-            // "http://www.siammm.cn",
-            // 为了安全，应该配置指定域名才允许跨域
-        );
-
-        $origin = $request->getHeader('origin');
-
-        if ($origin !== []){
-            $origin = $origin[0];
-            if(empty($allow_origin) || in_array($origin, $allow_origin)){
-                $response->withHeader('Access-Control-Allow-Origin', $origin);
-                $response->withHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-                $response->withHeader('Access-Control-Allow-Credentials', 'true');
-                $response->withHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, token');
-                if ($request->getMethod() === 'OPTIONS') {
-                    $response->withStatus(Status::CODE_OK);
-                    return false;
-                }
-            }
-        }
-
-        $response->withHeader('Content-type', 'application/json;charset=utf-8');
-
-        try {
-            PlugsHook::getInstance()->hook('ON_REQUEST', $request, $response);
-        } catch (\Throwable $e) {
-            echo $e->getMessage()."\n";
-            return false;
-        }
-
-        return true;
-    }
-
-    public static function afterRequest(Request $request, Response $response): void
-    {
-        try {
-            PlugsHook::getInstance()->hook('AFTER_REQUEST', $request, $response);
-        } catch (\Throwable $e) {
-            echo $e->getMessage()."\n";
-        }
     }
 }

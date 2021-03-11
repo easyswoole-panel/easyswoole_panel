@@ -6,6 +6,8 @@ defined('EASYSWOOLE_SERVER') or define('EASYSWOOLE_SERVER', 1);
 defined('EASYSWOOLE_WEB_SERVER') or define('EASYSWOOLE_WEB_SERVER', 2);
 defined('EASYSWOOLE_WEB_SOCKET_SERVER') or define('EASYSWOOLE_WEB_SOCKET_SERVER', 3);
 
+require_once __DIR__ . '/vendor/autoload.php';
+
 $databaseConfig = require_once "./dev.php";
 define('PHINX_PRE', $databaseConfig['MYSQL']['prefix']);
 
