@@ -37,5 +37,16 @@ final class PlugsInstalled extends AbstractMigration
                 'comment'=>'安装时间'
             ])
             ->create();
+        
+        if ($this->isMigratingUp()) {
+            $table->insert([
+                [
+                    'plugs_name' => 'siam/plugs',
+                    'plugs_version' => '1.0'
+                    'create_time' => date("Y-m-d H:i:s"),
+                ],
+            ])
+            ->save();
+        }
     }
 }
