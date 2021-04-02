@@ -42,8 +42,8 @@ final class PlugsInstalled extends AbstractMigration
             $table->insert([
                 [
                     'plugs_name' => 'siam/plugs',
-                    'plugs_version' => '1.0'
-                    'create_time' => date("Y-m-d H:i:s"),
+                    'plugs_version' => '1.0',
+                    'create_time' => 日期("Y-m-d H:i:s"),
                 ],
             ])
             ->save();
