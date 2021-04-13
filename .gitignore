@@ -19,6 +19,7 @@ Temp
 Log
 public/nepadmin/config.js
 EasySwooleEvent.php
+dev.php
 
 #other ide
 .settings/*s

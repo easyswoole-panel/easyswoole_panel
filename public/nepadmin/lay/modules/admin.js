@@ -241,6 +241,9 @@ layui
         str
       )
     }
+    self.popupClose = function(index) {
+      layer.close(index);
+    }
     self.popup = function(params) {
       var url = params.url || ''
       var success = params.success || function() {}
