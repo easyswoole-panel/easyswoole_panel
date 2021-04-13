@@ -112,6 +112,10 @@
         box-shadow:2px 4px 6px 0 rgba(0,0,0,.1);
     }
 
+    .opt-icon {
+        font-size: 30px !important;
+    }
+
 </style>
 <div class="layui-fluid" lay-title="权限管理">
     <div class="layui-row layui-col-space15">
@@ -132,9 +136,14 @@
                                class="layui-input">
                     </div>
                     <div class="layui-col-md6">
-                        <input type="text" name="auth_icon" placeholder="layui图标,首级菜单权限有效" autocomplete="off"
-                               class="layui-input">
+                        <button type="button" class="layui-btn layui-btn-fluid layui-btn-radius opt-icon-btn">
+                            <i class="opt-icon layui-icon"></i>
+                            选择字体图标（仅首级菜单权限有效）
+                        </button>
+
+                        <input type="hidden" name="auth_icon" placeholder="layui图标,首级菜单权限有效" autocomplete="off" class="layui-input" value="">
                     </div>
+
                     <div class="layui-form-item">
                         <input type="radio" name="auth_type" value="1" title="菜单" checked>
                         <input type="radio" name="auth_type" value="2" title="按钮">
@@ -311,6 +320,25 @@
                     $("#showCacheRes").html(res.result.res);
                 }
             })
+        });
+
+        // 字体图标选择ICON
+        $('.opt-icon-btn').on('click', function () {
+            admin.popup({
+                url:'/icon/index',
+                // area: ['700px', '450px'],
+                fixed: false, //不固定
+                maxmin: true,
+                success:function (el,i) {
+                    $('#VIEW-icon-index').on("click", ".layui-card", function(){
+                        let iconClass = $(this).find('.copy').attr('data-clipboard-text');
+                        $('.opt-icon').removeClass().addClass('opt-icon layui-icon '+iconClass);
+                        $("input[name='auth_icon']").val(iconClass);
+                        admin.popupClose(i);
+                    });
+                    return false;
+                }
+            });
         });
 
         // 手动调用验证权限
