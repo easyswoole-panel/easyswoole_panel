@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Common\Services;
 
+use App\Model\AuthModel;
 use App\Model\SystemModel;
 use App\Model\UserModel;
 
@@ -58,6 +59,11 @@ class MenuService
                 }
             }
             $tem = $this->auth_list[$value['id']];
+            
+            if ($tem instanceof AuthModel) {
+                $tem = $tem->toArray();
+            }
+            
             if ( isset($value['child'] ) ){
                 // unset($tem['auth_rules']);
                 $tem['childs'] = $this->makeTree($value['child']);
