@@ -1,3 +1,6 @@
+# system file
+.DS_Store
+
 # ide
 .idea
 .vscode
@@ -14,6 +17,8 @@ easyswoole.install
 src/swoole_log.txt
 Temp
 Log
+public/nepadmin/config.js
+EasySwooleEvent.php
 
 #other ide
 .settings/*s
