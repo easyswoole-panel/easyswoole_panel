@@ -100,7 +100,6 @@ class Auths extends Base
 	public function update()
 	{
 		$param = $this->request()->getRequestParam();
-		var_dump($param);
 		$model = new AuthModel();
 		$info = $model->get(['auth_id' => $param['auth_id']]);
 		if (empty($info)) {
@@ -144,7 +143,6 @@ class Auths extends Base
 	public function getOne()
 	{
 		$param = $this->request()->getRequestParam();
-        var_dump($param);
         
         $model = new AuthModel();
 		$bean = $model->get(['auth_id' => $param['auth_id']]);
