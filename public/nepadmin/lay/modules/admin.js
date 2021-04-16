@@ -242,7 +242,11 @@ layui
       )
     }
     self.popupClose = function(index) {
-      layer.close(index);
+      if (Number(index) > 0) {
+        layer.close(index);
+      } else {
+        layer.closeAll();
+      }
     }
     self.popup = function(params) {
       var url = params.url || ''

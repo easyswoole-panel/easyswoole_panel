@@ -117,7 +117,7 @@
         right: 5px;
         top: 4px;
     }
-    .dd-del {
+    .btn-del {
         margin-left: 0px !important;
     }
 
@@ -166,8 +166,27 @@
                     </div>
                 </div>
             </form>
-        </div>
+            <div class="layui-card">
+                <div class="layui-card-header">查看缓存</div>
+                <div class="layui-card-body layui-row layui-col-space10">
+                    <button class="layui-btn" id="showCache">查看</button>
 
+                    <button class="layui-btn" data-siam-auth="!testtets">没有testtets权限则显示</button>
+                    <button class="layui-btn" data-siam-auth="/api/*">有/api/*权限则显示</button>
+                    <button class="layui-btn" data-siam-auth="/admin/*">有/admin/*权限则显示</button>
+
+                    <div id="showCacheRes"></div>
+                </div>
+            </div>
+            <div class="layui-card">
+                <div class="layui-card-header">清空缓存</div>
+                <div class="layui-card-body layui-row layui-col-space10">
+                    <button class="layui-btn" id="clearCache">清空</button>
+                    <div id="clearCacheRes"></div>
+
+                </div>
+            </div>
+        </div>
         <div class="layui-col-md6">
             <div class="layui-card">
                 <div class="layui-card-header">权限排序 <span class="layui-badge-dot layui-bg-orange"></span>
@@ -186,98 +205,16 @@
             </div>
         </div>
     </div>
-
-    <!-- 第二行 -->
-
-    <div class="layui-row layui-col-space15">
-        <!-- 留空占用 -->
-        <div class="layui-col-md6">
-            <div class="layui-card">
-                <div class="layui-card-header">查看缓存</div>
-                <div class="layui-card-body layui-row layui-col-space10">
-                    <button class="layui-btn" id="showCache">查看</button>
-
-                    <button class="layui-btn" data-siam-auth="!testtets">没有testtets权限则显示</button>
-                    <button class="layui-btn" data-siam-auth="/api/*">有/api/*权限则显示</button>
-                    <button class="layui-btn" data-siam-auth="/admin/*">有/admin/*权限则显示</button>
-
-                    <div id="showCacheRes"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 清除权限缓存 -->
-        <div class="layui-col-md6">
-            <div class="layui-card">
-                <div class="layui-card-header">清空缓存</div>
-                <div class="layui-card-body layui-row layui-col-space10">
-                    <button class="layui-btn" id="clearCache">清空</button>
-                    <div id="clearCacheRes"></div>
-
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
 
-<script id="auth_list_tpl" type="text/html">
-    {{#
-    function siam(data,index){
-    if(!data || data.length === 0) return '';
-    var html = '<ol class="dd-list">';
-        layui.each(data,function(i,item){
-
-        switch(item.auth_type){
-        case 1:
-        html += '<li class="dd-item" data-id="' + item.auth_id+ '">';
-            break;
-            default:
-            html += '<li class="dd-item dd-hide" data-id="' + item.auth_id+ '">';
-            break;
-            }
-            if(item.childs && item.childs.length > 0){
-            html += '<button data-action="collapse" type="button"></button>';
-            html += '<button data-action="expand" type="button" style="display: none;"></button>';
-            }
-
-            html += '<div class="dd-handle">' +
-                '<span class="dd-icon"><i class="layui-icon '+ item.auth_icon +'"></i></span>' +
-                '<span class="dd-title ">'+ item.auth_name +'</span>';
-                switch(item.auth_type){
-                case 1:
-                html += ' <span class="layui-badge">菜单</span>';
-                break;
-                case 2:
-                html += ' <span class="layui-badge layui-bg-orange">按钮</span>';
-                break;
-                case 3:
-                html += ' <span class="layui-badge layui-bg-green">API</span>';
-                break;
-                }
-
-                html += '<div class="dd-btn-box"><button type="button" class="layui-btn layui-btn-xs layui-btn-warm dd-edit"><i class="layui-icon layui-icon-edit-fill"></i>编辑</button> <button type="button" class="layui-btn layui-btn-xs layui-btn-danger dd-del"><i class="layui-icon layui-icon-delete-fill"></i>删除</button></div>';
-                html +='</div>';
-            if(item.childs) html += siam(item.childs,index+1);
-            html += '</li>';
-        });
-
-        html += "</ol>";
-    return html;
-    };
-    }}
-    {{ siam(d, 1) }}
-
-</script>
 
 <script>
     layui.use(['admin', 'form', 'jquery', 'nestable', 'laytpl'], function (admin, form) {
-        var $ = layui.jquery;
-        var element = layui.element;
-        var nestable = layui.nestable;
-        var laytpl = layui.laytpl;
 
-        $('.dd').nestable();
+
+        var $ = layui.jquery;
+        var laytpl = layui.laytpl;
 
         $("#save_menu").on('click', function () {
             let menu = $('.dd').nestable('serialize');
@@ -291,11 +228,9 @@
                     layui.view.tab.refresh();
                 }
             })
-
         });
 
         form.render();
-        element.render('breadcrumb', 'breadcrumb');
 
         form.on('submit(add-auth)', function (data) {
             admin.post({
@@ -313,16 +248,68 @@
             return false;
         });
 
-        // 加载右侧权限列表
-        admin.post({
-            api: 'getAuthList',
-            success: function (res) {
-                let tpl = $("#auth_list_tpl").html();
-                laytpl(tpl).render(res.result, function (html) {
-                    $("#auth_list_bd").html(html);
-                });
-            }
-        });
+        var loadAuthList = function () {
+            // 加载右侧权限列表
+            admin.post({
+                api: 'getAuthList',
+                success: function (res) {
+                    let tpl = $("#auth_list_tpl").html();
+                    laytpl(tpl).render(res.result, function (html) {
+                        $("#auth_list_bd").html(html);
+                        // 权限排序绑定编辑信息
+                        $('.btn-edit').on('click', function () {
+                            let cWidth = Number($(window).width())/2.5;
+                            let cHeight = Number($(window).width())/3.5;
+                            let id = $(this).attr('data-id');
+                            admin.popup({
+                                title:'编辑权限',
+                                url:'/auths/edit',
+                                area: [cWidth+'px',cHeight+'px'],
+                                fixed: false, //不固定
+                                maxmin: true,
+                                success:function (el,i) {
+                                    authEditAction(id);
+                                }
+                            });
+                        });
+
+
+                        // 权限排序绑定编辑信息
+                        $('.btn-del').on('click', function () {
+                            let id = $(this).attr('data-id');
+                            admin.popup({
+                                title:'谨慎进行删除操作',
+                                fixed: false, //不固定
+                                type:0,
+                                btn:['删除','取消'],
+                                area: [100,100],
+                                maxmin: true,
+                                content:'<p style="margin: 10px">请确认是否真的要删除该信息<br />删除操作不可逆</p>',
+                                yes:function (el,i) {
+                                    admin.post({
+                                        api:'deleteAuth',
+                                        data:{'auth_id':id},
+                                        success:function (res) {
+
+                                            if (Number(res.code) === 200) {
+                                                admin.modal.success('删除成功！');
+                                            } else {
+                                                admin.modal.error('删除失败！');
+                                            }
+                                            loadAuthList()
+                                        }
+                                    });
+                                }
+                            });
+                        });
+
+                    });
+                }
+            });
+        }
+
+        loadAuthList();
+
         // 显示切换
         $('#displays').on('click', function () {
             let index = $(this).attr('data-id');
@@ -346,7 +333,6 @@
         $('#packup').on('click', function () {
             $('.dd').nestable('collapseAll');
         });
-
 
         // 清空缓存
         $("#clearCache").on('click',function () {
@@ -387,6 +373,86 @@
             });
         });
 
+        var authEditAction = function (id) {
+            admin.post({
+                url: '/auths/getOne',
+                data:{'auth_id':id},
+                success:function(res){
+                    if (res.code !== 200) {
+                        admin.popupClose();
+                        admin.modal.error('获取修改信息失败',{
+                            area:[200,200]
+                        });
+                    } else {
+                        // 编辑层模板
+                        let tpls = $("#auth_edit_tpl").html();
+                        laytpl(tpls).render(res.result, function (html) {
+
+                            $("#auth_edit").html(html);
+                            form.render(null, 'form-group');
+
+                            // 字体图标选择ICON
+                            $('.opt-icon-btn').on('click', function () {
+                                admin.popup({
+                                    url:'/icon/index',
+                                    // area: ['700px', '450px'],
+                                    fixed: false, //不固定
+                                    maxmin: true,
+                                    success:function (el,i) {
+                                        $('#VIEW-icon-index').on("click", ".layui-card", function(){
+                                            let iconClass = $(this).find('.copy').attr('data-clipboard-text');
+                                            $('.opt-icon').removeClass().addClass('opt-icon layui-icon '+iconClass);
+                                            $("input[name='auth_icon']").val(iconClass);
+                                            admin.popupClose(i);
+                                        });
+                                        return false;
+                                    }
+                                });
+                            });
+
+
+                            /* 自定义验证规则 */
+                            form.verify({
+                                auth_name: function (value) {
+                                    if (value.length < 1) {
+                                        return '权限名至少得1个字符';
+                                    }
+                                },
+                                auth_rules: function (value) {
+                                    if (value.length < 1) {
+                                        return '权限标识至少得1个字符';
+                                    }
+                                }
+                            });
+
+                            /* 监听提交 */
+                            form.on('submit(form-group-submit)', function (data) {
+
+                                admin.post({
+                                    api: 'updateAuth',
+                                    data:data.field,
+                                    success:function(res){
+                                        $("#clearCacheRes").html(res.result.res);
+                                        layer.alert('更新成功', {
+                                            icon: 1,
+                                            time: 1400,
+                                            end:function () {
+                                                loadAuthList();
+                                                admin.popupClose();
+                                            }
+                                        })
+                                    }
+                                });
+
+                                return false;
+                            });
+                        });
+                    }
+                }
+            });
+
+        }
+
         // 手动调用验证权限
         if ( layui.siam.vifAuth('/api/system/clearCache')){
             layer.msg('有/api/system/clearCache的权限');
@@ -395,4 +461,53 @@
         }
 
     });
+</script>
+
+<script id="auth_list_tpl" type="text/html">
+    {{#
+    function siam(data,index){
+    if(!data || data.length === 0) return '';
+    var html = '<ol class="dd-list">';
+        layui.each(data,function(i,item){
+
+        switch(item.auth_type){
+        case 1:
+        html += '<li class="dd-item" data-id="' + item.auth_id+ '">';
+            break;
+            default:
+            html += '<li class="dd-item dd-hide" data-id="' + item.auth_id+ '">';
+            break;
+            }
+            if(item.childs && item.childs.length > 0){
+            html += '<button data-action="collapse" type="button"></button>';
+            html += '<button data-action="expand" type="button" style="display: none;"></button>';
+            }
+
+            html += '<div class="dd-handle">' +
+                '<span class="dd-icon"><i class="layui-icon '+ item.auth_icon +'"></i></span>' +
+                '<span class="dd-title ">'+ item.auth_name +'</span>';
+                switch(item.auth_type){
+                case 1:
+                html += ' <span class="layui-badge">菜单</span>';
+                break;
+                case 2:
+                html += ' <span class="layui-badge layui-bg-orange">按钮</span>';
+                break;
+                case 3:
+                html += ' <span class="layui-badge layui-bg-green">API</span>';
+                break;
+                }
+                html +='</div>';
+
+            html += '<div class="dd-btn-box"><button type="button" class="layui-btn layui-btn-xs layui-btn-warm btn-edit" data-id="' + item.auth_id+ '"><i class="layui-icon layui-icon-edit-fill"></i>编辑</button> <button type="button" class="layui-btn layui-btn-xs layui-btn-danger btn-del" data-id="' + item.auth_id+ '"><i class="layui-icon layui-icon-delete-fill"></i>删除</button></div>';
+            if(item.childs) html += siam(item.childs,index+1);
+            html += '</li>';
+        });
+
+        html += "</ol>";
+    return html;
+    };
+    }}
+    {{ siam(d, 1) }}
+
 </script>
