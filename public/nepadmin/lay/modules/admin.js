@@ -241,6 +241,13 @@ layui
         str
       )
     }
+    self.popupClose = function(index) {
+      if (Number(index) > 0) {
+        layer.close(index);
+      } else {
+        layer.closeAll();
+      }
+    }
     self.popup = function(params) {
       var url = params.url || ''
       var success = params.success || function() {}

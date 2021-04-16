@@ -18,7 +18,7 @@
 ```
 1.下载源码，可以是clone也可以是下载打了tag的源码
 2.安装composer依赖 composer install或composer update
-3.安装easyswoole ./vendor/bin/eayswoole install
+3.安装easyswoole ./vendor/bin/easyswoole install
 4.编辑数据库配置 dev.php
 5.运行数据库迁移 ./vendor/bin/phinx migrate
 6.编辑前端public/nepadmin/config.js搜索 requestUrl 请求url换成你自己的es服务地址 IP:Port

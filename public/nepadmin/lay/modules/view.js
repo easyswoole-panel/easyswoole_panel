@@ -478,7 +478,6 @@ layui
           params.url = conf.requestUrl + params.url
         }
 
-
         var defaultParams = {
           timeout: 5000,
           type: 'get',
@@ -492,16 +491,22 @@ layui
                   layui.admin.logout()
                 })
               } else {
-                // self.log(
-                //   '返回状态码异常：' +
-                //     res[conf.response.statusName] +
-                //     '\n请求URL：' +
-                //     params.url
-                // );
-                layer.alert('返回状态码异常：' +res[conf.response.statusName] + "<br/>" + res[conf.response.msgName]);
+                if ($.isFunction(success)) {
+                  success(res)
+                } else {
+                  // self.log(
+                  //   '返回状态码异常：' +
+                  //     res[conf.response.statusName] +
+                  //     '\n请求URL：' +
+                  //     params.url
+                  // );
+
+                  layer.alert('返回状态码异常：' +res[conf.response.statusName] + "<br/>" + res[conf.response.msgName]);
+                }
                 return false;
               }
             }
+
             if ($.isFunction(success)) success(res)
           },
           error: function(res) {
@@ -526,6 +531,8 @@ layui
           var token = layui.admin.getLoginToken()
           if (token) defaultParams.headers[conf.tokenName] = token
         }
+
+
         delete params.success
         delete params.error
 
