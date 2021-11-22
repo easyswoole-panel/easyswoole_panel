@@ -143,7 +143,8 @@ class Auths extends Base
 	public function getOne()
 	{
 		$param = $this->request()->getRequestParam();
-		$model = new AuthModel();
+        
+        $model = new AuthModel();
 		$bean = $model->get(['auth_id' => $param['auth_id']]);
 		if ($bean) {
 		    $this->writeJson(Status::CODE_OK, $bean, "success");

@@ -28,49 +28,46 @@
         margin:0;
         padding:0;
         min-height:20px;
-        font-size:13px;
+        font-size:14px;
         line-height:20px;
     }
     .dd-handle {
         display:block;
         height:30px;
         margin:5px 0;
-        padding:5px 10px;
+        padding:5px;
         color:#333;
         text-decoration:none;
-        font-weight:bold;
-        border:1px solid #ccc;
+        /*font-weight:bold;*/
         background:#f2f2f2;
-        -webkit-border-radius:3px;
-        border-radius:3px;
         box-sizing:border-box;
         -moz-box-sizing:border-box;
     }
     .dd-handle:hover {
-        color:#2ea8e5;
-        background:#fff;
+        color:#fff;
+        background:#5a8bff;
+        cursor: pointer;
     }
     .dd-item > button {
-        display:block;
-        position:relative;
-        cursor:pointer;
-        float:left;
-        width:25px;
-        height:20px;
-        margin:5px 0;
-        padding:0;
-        text-indent:100%;
-        white-space:nowrap;
-        overflow:hidden;
-        border:0;
-        background:transparent;
-        font-size:12px;
-        line-height:1;
-        text-align:center;
-        font-weight:bold;
+        display: block;
+        position: relative;
+        cursor: pointer;
+        float: left;
+        width: 30px;
+        height: 30px;
+        padding: 0;
+        text-indent: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        border: 0;
+        font-size: 23px;
+        color: #fff;
+        line-height: 0px;
+        text-align: center;
+        background-color: #5a8bff;
     }
     .dd-item > button:before {
-        content:'+';
+        content:'＋';
         display:block;
         position:absolute;
         width:100%;
@@ -78,7 +75,7 @@
         text-indent:0;
     }
     .dd-item > button[data-action="collapse"]:before {
-        content:'-';
+        content:'－';
     }
     .dd-placeholder,.dd-empty {
         margin:5px 0;
@@ -111,6 +108,22 @@
         -webkit-box-shadow:2px 4px 6px 0 rgba(0,0,0,.1);
         box-shadow:2px 4px 6px 0 rgba(0,0,0,.1);
     }
+    .dd-icon {
+        margin: 0px 3px 0px 5px;
+    }
+    .dd-btn-box {
+        position: absolute;
+        float: right;
+        right: 5px;
+        top: 4px;
+    }
+    .btn-del {
+        margin-left: 0px !important;
+    }
+
+    .opt-icon {
+        font-size: 30px !important;
+    }
 
 </style>
 <div class="layui-fluid" lay-title="权限管理">
@@ -132,9 +145,14 @@
                                class="layui-input">
                     </div>
                     <div class="layui-col-md6">
-                        <input type="text" name="auth_icon" placeholder="layui图标,首级菜单权限有效" autocomplete="off"
-                               class="layui-input">
+                        <button type="button" class="layui-btn layui-btn-fluid layui-btn-radius opt-icon-btn">
+                            <i class="opt-icon layui-icon"></i>
+                            选择字体图标（仅首级菜单权限有效）
+                        </button>
+
+                        <input type="hidden" name="auth_icon" placeholder="layui图标,首级菜单权限有效" autocomplete="off" class="layui-input" value="">
                     </div>
+
                     <div class="layui-form-item">
                         <input type="radio" name="auth_type" value="1" title="菜单" checked>
                         <input type="radio" name="auth_type" value="2" title="按钮">
@@ -148,29 +166,6 @@
                     </div>
                 </div>
             </form>
-        </div>
-
-        <div class="layui-col-md6">
-            <div class="layui-card">
-                <div class="layui-card-header">权限排序</div>
-                <div class="layui-card-body layui-row layui-col-space10">
-                    <p>
-                        <span class="layui-badge-dot layui-bg-orange"></span>
-                        排序决定菜单类型权限显示，其他只为分类好区分
-                        <button id="save_menu" class="layui-btn layui-btn-xs">保存排序</button>
-                    </p>
-                    <div class="dd" id="auth_list_bd">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 第二行 -->
-
-    <div class="layui-row layui-col-space15">
-        <!-- 留空占用 -->
-        <div class="layui-col-md6">
             <div class="layui-card">
                 <div class="layui-card-header">查看缓存</div>
                 <div class="layui-card-body layui-row layui-col-space10">
@@ -183,10 +178,6 @@
                     <div id="showCacheRes"></div>
                 </div>
             </div>
-        </div>
-
-        <!-- 清除权限缓存 -->
-        <div class="layui-col-md6">
             <div class="layui-card">
                 <div class="layui-card-header">清空缓存</div>
                 <div class="layui-card-body layui-row layui-col-space10">
@@ -196,57 +187,34 @@
                 </div>
             </div>
         </div>
+        <div class="layui-col-md6">
+            <div class="layui-card">
+                <div class="layui-card-header">权限排序 <span class="layui-badge-dot layui-bg-orange"></span>
+                    <span style="font-size: 12px">排序决定菜单类型权限显示，其他只为分类好区分</span></div>
+                <div class="layui-card-body layui-row layui-col-space10">
+                    <div class="layui-btn-group">
+                        <button type="button" id="unfold" class="layui-btn ">全部展开</button>
+                        <button type="button" id="packup" class="layui-btn">全部收起</button>
+                        <button type="button" id="displays" data-id="0" class="layui-btn">显示全部</button>
+                        <button type="button" id="save_menu" class="layui-btn">保存排序</button>
+
+                    </div>
+                    <div class="dd" id="auth_list_bd">
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 
-<script id="auth_list_tpl" type="text/html">
-    {{#
-    function siam(data,index){
-        if(!data || data.length === 0) return '';
-        var html = '<ol class="dd-list">';
-        layui.each(data,function(i,item){
-            html += '<li class="dd-item" data-id="' + item.auth_id+ '">';
-            if(item.childs && item.childs.length > 0){
-                html += '<button data-action="collapse" type="button">Collapse</button>';
-                html += '<button data-action="expand" type="button" style="display: none;">Expand</button>';
-            }
-
-            html += '<div class="dd-handle">' + item.auth_name;
-            switch(item.auth_type){
-                case 1:
-                    html += ' <span class="layui-badge">菜单</span>';
-                    break;
-                case 2:
-                    html += ' <span class="layui-badge layui-bg-orange">按钮</span>';
-                    break;
-                case 3:
-                    html += ' <span class="layui-badge layui-bg-green">api</span>';
-                    break;
-
-            }
-            html +='</div>';
-            if(item.childs) html += siam(item.childs,index+1);
-                html += '</li>';
-            });
-
-            html += "</ol>";
-            return html;
-        };
-    }}
-    {{ siam(d, 1) }}
-
-</script>
-
 
 <script>
     layui.use(['admin', 'form', 'jquery', 'nestable', 'laytpl'], function (admin, form) {
-        var $ = layui.jquery;
-        var element = layui.element;
-        var nestable = layui.nestable;
-        var laytpl = layui.laytpl;
 
-        $('.dd').nestable();
+
+        var $ = layui.jquery;
+        var laytpl = layui.laytpl;
 
         $("#save_menu").on('click', function () {
             let menu = $('.dd').nestable('serialize');
@@ -260,11 +228,9 @@
                     layui.view.tab.refresh();
                 }
             })
-
         });
 
         form.render();
-        element.render('breadcrumb', 'breadcrumb');
 
         form.on('submit(add-auth)', function (data) {
             admin.post({
@@ -282,15 +248,90 @@
             return false;
         });
 
-        // 加载右侧权限列表
-        admin.post({
-            api: 'getAuthList',
-            success: function (res) {
-                let tpl = $("#auth_list_tpl").html();
-                laytpl(tpl).render(res.result, function (html) {
-                    $("#auth_list_bd").html(html);
-                });
+        var loadAuthList = function () {
+            // 加载右侧权限列表
+            admin.post({
+                api: 'getAuthList',
+                success: function (res) {
+                    let tpl = $("#auth_list_tpl").html();
+                    laytpl(tpl).render(res.result, function (html) {
+                        $("#auth_list_bd").html(html);
+                        // 权限排序绑定编辑信息
+                        $('.btn-edit').on('click', function () {
+                            let cWidth = Number($(window).width())/2.5;
+                            let cHeight = Number($(window).width())/3.5;
+                            let id = $(this).attr('data-id');
+                            admin.popup({
+                                title:'编辑权限',
+                                url:'/auths/edit',
+                                area: [cWidth+'px',cHeight+'px'],
+                                fixed: false, //不固定
+                                maxmin: true,
+                                success:function (el,i) {
+                                    authEditAction(id);
+                                }
+                            });
+                        });
+
+
+                        // 权限排序绑定编辑信息
+                        $('.btn-del').on('click', function () {
+                            let id = $(this).attr('data-id');
+                            admin.popup({
+                                title:'谨慎进行删除操作',
+                                fixed: false, //不固定
+                                type:0,
+                                btn:['删除','取消'],
+                                area: [100,100],
+                                maxmin: true,
+                                content:'<p style="margin: 10px">请确认是否真的要删除该信息<br />删除操作不可逆</p>',
+                                yes:function (el,i) {
+                                    admin.post({
+                                        api:'deleteAuth',
+                                        data:{'auth_id':id},
+                                        success:function (res) {
+
+                                            if (Number(res.code) === 200) {
+                                                admin.modal.success('删除成功！');
+                                            } else {
+                                                admin.modal.error('删除失败！');
+                                            }
+                                            loadAuthList()
+                                        }
+                                    });
+                                }
+                            });
+                        });
+
+                    });
+                }
+            });
+        }
+
+        loadAuthList();
+
+        // 显示切换
+        $('#displays').on('click', function () {
+            let index = $(this).attr('data-id');
+            if (Number(index) === 0) {
+                $(this).text('显示菜单')
+                $(this).attr('data-id', 1);
+                $('.dd-hide').hide();
+            } else {
+                $(this).text('显示全部');
+                $(this).attr('data-id', 0);
+                $('.dd-hide').show();
             }
+        });
+
+        $('.dd').nestable();
+        //展开所有节点
+        $('#unfold').on('click', function () {
+            $('.dd').nestable('expandAll');
+        });
+        //折叠所有节点
+        $('#packup').on('click', function () {
+            $('.dd').nestable('collapseAll');
         });
 
         // 清空缓存
@@ -313,6 +354,105 @@
             })
         });
 
+        // 字体图标选择ICON
+        $('.opt-icon-btn').on('click', function () {
+            admin.popup({
+                url:'/icon/index',
+                // area: ['700px', '450px'],
+                fixed: false, //不固定
+                maxmin: true,
+                success:function (el,i) {
+                    $('#VIEW-icon-index').on("click", ".layui-card", function(){
+                        let iconClass = $(this).find('.copy').attr('data-clipboard-text');
+                        $('.opt-icon').removeClass().addClass('opt-icon layui-icon '+iconClass);
+                        $("input[name='auth_icon']").val(iconClass);
+                        admin.popupClose(i);
+                    });
+                    return false;
+                }
+            });
+        });
+
+        var authEditAction = function (id) {
+            admin.post({
+                url: '/auths/getOne',
+                data:{'auth_id':id},
+                success:function(res){
+                    if (res.code !== 200) {
+                        admin.popupClose();
+                        admin.modal.error('获取修改信息失败',{
+                            area:[200,200]
+                        });
+                    } else {
+                        // 编辑层模板
+                        let tpls = $("#auth_edit_tpl").html();
+                        laytpl(tpls).render(res.result, function (html) {
+
+                            $("#auth_edit").html(html);
+                            form.render(null, 'form-group');
+
+                            // 字体图标选择ICON
+                            $('.opt-icon-btn').on('click', function () {
+                                admin.popup({
+                                    url:'/icon/index',
+                                    // area: ['700px', '450px'],
+                                    fixed: false, //不固定
+                                    maxmin: true,
+                                    success:function (el,i) {
+                                        $('#VIEW-icon-index').on("click", ".layui-card", function(){
+                                            let iconClass = $(this).find('.copy').attr('data-clipboard-text');
+                                            $('.opt-icon').removeClass().addClass('opt-icon layui-icon '+iconClass);
+                                            $("input[name='auth_icon']").val(iconClass);
+                                            admin.popupClose(i);
+                                        });
+                                        return false;
+                                    }
+                                });
+                            });
+
+
+                            /* 自定义验证规则 */
+                            form.verify({
+                                auth_name: function (value) {
+                                    if (value.length < 1) {
+                                        return '权限名至少得1个字符';
+                                    }
+                                },
+                                auth_rules: function (value) {
+                                    if (value.length < 1) {
+                                        return '权限标识至少得1个字符';
+                                    }
+                                }
+                            });
+
+                            /* 监听提交 */
+                            form.on('submit(form-group-submit)', function (data) {
+
+                                admin.post({
+                                    api: 'updateAuth',
+                                    data:data.field,
+                                    success:function(res){
+                                        $("#clearCacheRes").html(res.result.res);
+                                        layer.alert('更新成功', {
+                                            icon: 1,
+                                            time: 1400,
+                                            end:function () {
+                                                loadAuthList();
+                                                admin.popupClose();
+                                            }
+                                        })
+                                    }
+                                });
+
+                                return false;
+                            });
+                        });
+                    }
+                }
+            });
+
+        }
+
         // 手动调用验证权限
         if ( layui.siam.vifAuth('/api/system/clearCache')){
             layer.msg('有/api/system/clearCache的权限');
@@ -321,4 +461,53 @@
         }
 
     });
+</script>
+
+<script id="auth_list_tpl" type="text/html">
+    {{#
+    function siam(data,index){
+    if(!data || data.length === 0) return '';
+    var html = '<ol class="dd-list">';
+        layui.each(data,function(i,item){
+
+        switch(item.auth_type){
+        case 1:
+        html += '<li class="dd-item" data-id="' + item.auth_id+ '">';
+            break;
+            default:
+            html += '<li class="dd-item dd-hide" data-id="' + item.auth_id+ '">';
+            break;
+            }
+            if(item.childs && item.childs.length > 0){
+            html += '<button data-action="collapse" type="button"></button>';
+            html += '<button data-action="expand" type="button" style="display: none;"></button>';
+            }
+
+            html += '<div class="dd-handle">' +
+                '<span class="dd-icon"><i class="layui-icon '+ item.auth_icon +'"></i></span>' +
+                '<span class="dd-title ">'+ item.auth_name +'</span>';
+                switch(item.auth_type){
+                case 1:
+                html += ' <span class="layui-badge">菜单</span>';
+                break;
+                case 2:
+                html += ' <span class="layui-badge layui-bg-orange">按钮</span>';
+                break;
+                case 3:
+                html += ' <span class="layui-badge layui-bg-green">API</span>';
+                break;
+                }
+                html +='</div>';
+
+            html += '<div class="dd-btn-box"><button type="button" class="layui-btn layui-btn-xs layui-btn-warm btn-edit" data-id="' + item.auth_id+ '"><i class="layui-icon layui-icon-edit-fill"></i>编辑</button> <button type="button" class="layui-btn layui-btn-xs layui-btn-danger btn-del" data-id="' + item.auth_id+ '"><i class="layui-icon layui-icon-delete-fill"></i>删除</button></div>';
+            if(item.childs) html += siam(item.childs,index+1);
+            html += '</li>';
+        });
+
+        html += "</ol>";
+    return html;
+    };
+    }}
+    {{ siam(d, 1) }}
+
 </script>

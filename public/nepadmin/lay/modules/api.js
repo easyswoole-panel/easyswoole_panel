@@ -10,6 +10,8 @@ layui.define([], function (exports) {
         getAuthList: 'auths/get_tree_list',
         saveAuthList: 'auths/save_tree_list',
         addAuth: 'auths/add',
+        deleteAuth: 'auths/delete',
+        updateAuth: 'auths/update',
         getAllAuth: 'auths/getAll',
 
         // 角色管理
